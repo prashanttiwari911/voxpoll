@@ -1,6 +1,9 @@
 import { PrismaClient } from "@prisma/client";
 import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
 import path from "path";
+// Validate required environment variables on startup
+import "@/lib/env";
+
 
 // Resolve the absolute path of the SQLite dev.db file
 const dbPath = path.resolve(process.cwd(), "dev.db");

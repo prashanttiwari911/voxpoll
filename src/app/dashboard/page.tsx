@@ -56,7 +56,7 @@ export default async function DashboardPage() {
             <Sparkles className="h-6 w-6 text-amber-300 fill-amber-300 animate-pulse" />
           </h1>
           <p className="text-indigo-100 text-sm mt-1">
-            Welcome to your VoxPoll command center. Cast votes and check your impact!
+            Welcome to your VoTI command center. Cast votes and check your impact!
           </p>
         </div>
         <div className="flex gap-3">

@@ -16,6 +16,8 @@ export default function DevLoginConsole() {
   const [email, setEmail] = useState("");
   const [age, setAge] = useState("");
   const [address, setAddress] = useState("");
+  const [magicEmail, setMagicEmail] = useState("");
+  const [magicSent, setMagicSent] = useState(false);
   const [loading, setLoading] = useState(false);
 
   // Trigger login via Credentials Provider
@@ -32,6 +34,21 @@ export default function DevLoginConsole() {
       callbackUrl: "/dashboard",
     });
     setLoading(false);
+  };
+
+  // Trigger Magic Link (Email OTP)
+  const handleMagicLink = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!magicEmail) return;
+
+    setLoading(true);
+    await signIn("email", {
+      email: magicEmail,
+      redirect: false,
+      callbackUrl: "/dashboard",
+    });
+    setLoading(false);
+    setMagicSent(true);
   };
 
   // Quick Login using one of the demo presets
@@ -53,7 +70,7 @@ export default function DevLoginConsole() {
         <div className="inline-flex bg-indigo-100 text-indigo-700 p-2.5 rounded-2xl mb-3">
           <Lock className="h-5 w-5" />
         </div>
-        <h3 className="text-xl font-black text-slate-800">Access VoxPoll</h3>
+        <h3 className="text-xl font-black text-slate-800">Access VoTI</h3>
         <p className="text-slate-500 text-xs mt-1 leading-relaxed">
           Sign in to cast your ballot, launch new polls, and analyze live demographics!
         </p>
@@ -74,6 +91,49 @@ export default function DevLoginConsole() {
           </svg>
           <span>Continue with Google</span>
         </button>
+
+        <div className="flex items-center my-4 text-xs font-bold text-slate-400 uppercase tracking-widest">
+          <div className="flex-1 border-t border-slate-100" />
+          <span className="px-3">or</span>
+          <div className="flex-1 border-t border-slate-100" />
+        </div>
+
+        {/* Magic Link / Email OTP Form */}
+        <form onSubmit={handleMagicLink} className="space-y-3.5">
+          <div className="bg-emerald-50/50 border border-emerald-100 rounded-2xl p-4 space-y-3">
+            <h4 className="text-xs font-black text-emerald-700 uppercase tracking-wider flex items-center">
+              <Sparkles className="h-3.5 w-3.5 mr-1" />
+              Sign in with Magic Link
+            </h4>
+            <p className="text-[10px] text-slate-500 leading-normal">
+              Enter your email and we'll send a secure one-time login link to your terminal!
+            </p>
+
+            {magicSent ? (
+              <div className="bg-emerald-100 text-emerald-800 p-3 rounded-xl text-xs font-bold text-center">
+                ✅ Magic Link generated! Check your VS Code Terminal!
+              </div>
+            ) : (
+              <div className="flex gap-2 mt-2">
+                <input
+                  type="email"
+                  value={magicEmail}
+                  onChange={(e) => setMagicEmail(e.target.value)}
+                  placeholder="name@example.com"
+                  required
+                  className="flex-1 px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500 text-slate-800"
+                />
+                <button
+                  type="submit"
+                  disabled={loading || !magicEmail}
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md transition-colors disabled:opacity-50"
+                >
+                  Send
+                </button>
+              </div>
+            )}
+          </div>
+        </form>
 
         {/* Divider */}
         <div className="flex items-center my-4 text-xs font-bold text-slate-400 uppercase tracking-widest">

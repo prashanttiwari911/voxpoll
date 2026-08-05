@@ -14,14 +14,14 @@ async function seedPollsIfNeeded() {
 
     // Create system seed creator
     let systemUser = await db.user.findUnique({
-      where: { email: "system@voxpoll.com" },
+      where: { email: "system@voti.com" },
     });
 
     if (!systemUser) {
       systemUser = await db.user.create({
         data: {
-          email: "system@voxpoll.com",
-          name: "VoxPoll System",
+          email: "system@voti.com",
+          name: "VoTI System",
           age: 28,
           address: "Delhi",
         },
@@ -110,19 +110,20 @@ export default async function Home() {
   // Seed the database if empty
   await seedPollsIfNeeded();
 
-  // Fetch all polls sorted by creation date
   const polls = await db.poll.findMany({
+    where: { status: "PUBLISHED" }, // Only show published polls on home page
     orderBy: { createdAt: "desc" },
     include: {
-      creator: {
-        select: { name: true },
-      },
+      creator: { select: { name: true } },
       options: true,
-      _count: {
-        select: { votes: true },
-      },
+      _count: { select: { votes: true } },
     },
+    take: 100,
   });
+
+  // Prepare polls with status for PollsList
+  const pollsWithStatus = polls.map((p) => ({ ...p, status: p.status ?? "PUBLISHED" }));
+
 
   return (
     <div className="flex-1 flex flex-col space-y-12 pb-16">
@@ -139,7 +140,7 @@ export default async function Home() {
           </div>
 
           <h1 className="text-4xl sm:text-6xl font-black tracking-tight leading-tight">
-            Make Your Voice Heard on <span className="underline decoration-pink-400 decoration-wavy">VoxPoll</span>
+            Make Your Voice Heard on <span className="underline decoration-pink-400 decoration-wavy">VoTI</span>
           </h1>
 
           <p className="text-base sm:text-lg text-indigo-100 max-w-2xl mx-auto leading-relaxed">
@@ -186,11 +187,11 @@ export default async function Home() {
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-black text-slate-800">Explore Active Polls</h2>
               <span className="text-xs bg-indigo-50 text-indigo-600 font-extrabold py-1 px-3 rounded-full border border-indigo-100">
-                {polls.length} Polls Active
+                {pollsWithStatus.length} Polls
               </span>
             </div>
             
-            <PollsList initialPolls={polls} />
+            <PollsList initialPolls={pollsWithStatus} />
           </div>
 
           {/* Right panel: Authentication Portal */}

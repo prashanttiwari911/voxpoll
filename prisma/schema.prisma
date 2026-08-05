@@ -9,19 +9,34 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+// SQLite does not support native enums — store as String with validation in app
+// Possible values documented via comments below.
+
+// Role: "USER" | "ADMIN" | "MODERATOR"
+// PollStatus: "DRAFT" | "PUBLISHED" | "CLOSED"
+// NotificationType: "VOTE" | "COMMENT" | "REPLY" | "LIKE" | "SYSTEM"
+
+// ---------------------------------------------------------------------------
+// Auth Models (NextAuth adapter)
+// ---------------------------------------------------------------------------
+
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?
-  access_token       String?
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?
-  session_state      String?
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -36,23 +51,6 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  
-  // Custom user details requested: name (stored above), age, address
-  age           Int?
-  address       String?
-  
-  accounts      Account[]
-  sessions      Session[]
-  polls         Poll[]
-  votes         Vote[]
-}
-
 model VerificationToken {
   identifier String
   token      String   @unique
@@ -61,18 +59,97 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+// ---------------------------------------------------------------------------
+// User
+// ---------------------------------------------------------------------------
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+
+  // Profile fields
+  age     Int?
+  address String? // free-text region / city
+
+  // Role: "USER" | "ADMIN" | "MODERATOR"
+  role String @default("USER")
+
+  // Relations
+  accounts      Account[]
+  sessions      Session[]
+  polls         Poll[]
+  votes         Vote[]
+  comments      Comment[]
+  commentLikes  CommentLike[]
+  bookmarks     Bookmark[]
+  notifications Notification[]
+  auditLogs     AuditLog[]
+}
+
+// ---------------------------------------------------------------------------
+// Tag
+// ---------------------------------------------------------------------------
+
+model Tag {
+  id    String     @id @default(cuid())
+  name  String     @unique
+  polls PollTag[]
+}
+
+// ---------------------------------------------------------------------------
+// Poll
+// ---------------------------------------------------------------------------
+
 model Poll {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   question    String
   description String?
-  category    String   // "EDUCATION", "SPORTS", "POLITICS", "BOOKS"
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  creatorId   String
-  creator     User     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
-  options     Option[]
-  votes       Vote[]
+  category    String    // "EDUCATION" | "SPORTS" | "POLITICS" | "BOOKS" | "TECHNOLOGY" | "HEALTH" | "OTHER"
+
+  // Lifecycle
+  // status: "DRAFT" | "PUBLISHED" | "CLOSED"
+  status      String    @default("PUBLISHED")
+  closesAt    DateTime? // null = never closes automatically
+  scheduledAt DateTime? // future publish date (for DRAFT → PUBLISHED transition)
+
+  // Media & multi-choice
+  imageUrl       String?
+  isMultipleChoice Boolean @default(false)
+  maxChoices     Int     @default(1) // relevant only when isMultipleChoice = true
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  creatorId String
+  creator   User      @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
+  options       Option[]
+  votes         Vote[]
+  comments      Comment[]
+  bookmarks     Bookmark[]
+  tags          PollTag[]
+  notifications Notification[]
 }
+
+// ---------------------------------------------------------------------------
+// PollTag (many-to-many join)
+// ---------------------------------------------------------------------------
+
+model PollTag {
+  pollId String
+  tagId  String
+
+  poll Poll @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  tag  Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([pollId, tagId])
+}
+
+// ---------------------------------------------------------------------------
+// Option
+// ---------------------------------------------------------------------------
 
 model Option {
   id     String @id @default(cuid())
@@ -81,6 +158,10 @@ model Option {
   poll   Poll   @relation(fields: [pollId], references: [id], onDelete: Cascade)
   votes  Vote[]
 }
+
+// ---------------------------------------------------------------------------
+// Vote  (supports both single-choice and multi-choice)
+// ---------------------------------------------------------------------------
 
 model Vote {
   id        String   @id @default(cuid())
@@ -93,6 +174,101 @@ model Vote {
   poll   Poll   @relation(fields: [pollId], references: [id], onDelete: Cascade)
   option Option @relation(fields: [optionId], references: [id], onDelete: Cascade)
 
-  // A user can vote at most once on a specific poll
+  // One row per option selected — uniqueness enforced per option to allow multi-choice
+  @@unique([userId, pollId, optionId])
+}
+
+// ---------------------------------------------------------------------------
+// Comment  (nested via self-relation)
+// ---------------------------------------------------------------------------
+
+model Comment {
+  id        String   @id @default(cuid())
+  pollId    String
+  userId    String
+  text      String
+  likes     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Self-relation for threaded replies
+  parentId String?
+  parent   Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replies  Comment[] @relation("CommentReplies")
+
+  // Sentiment from VADER microservice (nullable until analysed)
+  sentimentScore Float?
+  // "POSITIVE" | "NEGATIVE" | "NEUTRAL" | "COMPOUND"
+  sentimentLabel String?
+
+  poll         Poll          @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  commentLikes CommentLike[]
+}
+
+// ---------------------------------------------------------------------------
+// CommentLike
+// ---------------------------------------------------------------------------
+
+model CommentLike {
+  id        String   @id @default(cuid())
+  userId    String
+  commentId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, commentId])
+}
+
+// ---------------------------------------------------------------------------
+// Bookmark
+// ---------------------------------------------------------------------------
+
+model Bookmark {
+  id        String   @id @default(cuid())
+  userId    String
+  pollId    String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  poll Poll @relation(fields: [pollId], references: [id], onDelete: Cascade)
+
   @@unique([userId, pollId])
+}
+
+// ---------------------------------------------------------------------------
+// Notification
+// ---------------------------------------------------------------------------
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String   // recipient
+  // type: "VOTE" | "COMMENT" | "REPLY" | "LIKE" | "SYSTEM"
+  type      String
+  message   String
+  isRead    Boolean  @default(false)
+  pollId    String?  // optional link to poll
+  createdAt DateTime @default(now())
+
+  user User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  poll Poll? @relation(fields: [pollId], references: [id], onDelete: SetNull)
+}
+
+// ---------------------------------------------------------------------------
+// AuditLog
+// ---------------------------------------------------------------------------
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?  // null for anonymous/system actions
+  action    String   // e.g. "CREATE_POLL", "DELETE_POLL", "ADMIN_BAN_USER"
+  entity    String   // e.g. "Poll", "User", "Comment"
+  entityId  String?  // ID of the affected record
+  metadata  String?  // JSON blob — additional context
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
 }

@@ -3,7 +3,7 @@
 import { useSession, signIn, signOut } from "next-auth/react";
 import Link from "next/link";
 import { useState } from "react";
-import { Vote, PlusCircle, LogOut, User, LayoutDashboard, Menu, X, HelpCircle } from "lucide-react";
+import { Vote, PlusCircle, LogOut, User, LayoutDashboard, Menu, X, Bell, Bookmark, Shield } from "lucide-react";
 
 export default function Navbar() {
   const { data: session } = useSession();
@@ -23,7 +23,7 @@ export default function Navbar() {
                 <Vote className="h-6 w-6" />
               </div>
               <span className="text-2xl font-extrabold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent group-hover:opacity-85 transition-opacity">
-                VoxPoll
+                VoTI
               </span>
             </Link>
           </div>
@@ -52,6 +52,30 @@ export default function Navbar() {
                 >
                   <LayoutDashboard className="h-4 w-4" />
                   <span>Dashboard</span>
+                </Link>
+                <Link
+                  href="/admin"
+                  className="flex items-center space-x-1.5 text-gray-600 hover:text-red-500 font-medium transition-colors"
+                  title="Admin Panel"
+                >
+                  <Shield className="h-4 w-4" />
+                  <span>Admin</span>
+                </Link>
+                <Link
+                  href="/bookmarks"
+                  className="flex items-center space-x-1.5 text-gray-600 hover:text-indigo-600 font-medium transition-colors"
+                  title="Saved Polls"
+                >
+                  <Bookmark className="h-4 w-4" />
+                  <span>Bookmarks</span>
+                </Link>
+                {/* Notification bell */}
+                <Link
+                  href="/notifications"
+                  className="relative flex items-center justify-center text-gray-600 hover:text-indigo-600 transition-colors"
+                  title="Notifications"
+                >
+                  <Bell className="h-5 w-5" />
                 </Link>
               </>
             )}
@@ -147,12 +171,20 @@ export default function Navbar() {
                 <span>Create Poll</span>
               </Link>
               <Link
-                href="/dashboard"
+                href="/bookmarks"
                 onClick={() => setMobileMenuOpen(false)}
                 className="flex items-center space-x-2 px-3 py-2 rounded-xl text-base font-medium text-gray-700 hover:bg-indigo-50 hover:text-indigo-600"
               >
-                <LayoutDashboard className="h-5 w-5" />
-                <span>Dashboard</span>
+                <Bookmark className="h-5 w-5" />
+                <span>Bookmarks</span>
+              </Link>
+              <Link
+                href="/notifications"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center space-x-2 px-3 py-2 rounded-xl text-base font-medium text-gray-700 hover:bg-indigo-50 hover:text-indigo-600"
+              >
+                <Bell className="h-5 w-5" />
+                <span>Notifications</span>
               </Link>
               <Link
                 href="/profile"

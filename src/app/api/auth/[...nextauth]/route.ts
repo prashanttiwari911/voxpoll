@@ -2,17 +2,35 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
+import EmailProvider from "next-auth/providers/email";
 import { db } from "@/lib/db";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(db),
   session: {
     strategy: "jwt",
+    maxAge: 7 * 24 * 60 * 60, // 7 days
   },
+
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID || "MOCK_GOOGLE_CLIENT_ID",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || "MOCK_GOOGLE_CLIENT_SECRET",
+    }),
+    EmailProvider({
+      server: {
+        host: "localhost",
+        port: 2525,
+        auth: { user: "test", pass: "test" },
+      },
+      from: "noreply@voti.com",
+      // Custom send function to print the magic link to the terminal instead of sending an email
+      sendVerificationRequest({ identifier: email, url }) {
+        console.log("\n=======================================================");
+        console.log(`[VoTI] 🔑 MAGIC LINK FOR ${email}:`);
+        console.log(url);
+        console.log("=======================================================\n");
+      },
     }),
     CredentialsProvider({
       name: "Developer Login",
@@ -63,6 +81,7 @@ export const authOptions: NextAuthOptions = {
           image: `https://api.dicebear.com/7.x/fun-emoji/svg?seed=${user.name || "user"}&backgroundColor=b6e3f4,c0aade,d1d4f9`,
           age: user.age,
           address: user.address,
+          role: user.role,
         };
       },
     }),
@@ -73,16 +92,18 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
         token.age = user.age;
         token.address = user.address;
+        token.role = (user as any).role || "USER"; // Default if not immediately available on NextAuth User object
       } else if (token?.email) {
         // Query the database to retrieve latest age and address details
         const dbUser = await db.user.findUnique({
           where: { email: token.email },
-          select: { id: true, age: true, address: true },
+          select: { id: true, age: true, address: true, role: true },
         });
         if (dbUser) {
           token.id = dbUser.id;
           token.age = dbUser.age;
           token.address = dbUser.address;
+          token.role = dbUser.role;
         }
       }
       return token;
@@ -92,6 +113,7 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.id;
         session.user.age = token.age;
         session.user.address = token.address;
+        session.user.role = token.role;
       }
       return session;
     },

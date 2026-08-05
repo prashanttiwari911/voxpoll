@@ -50,7 +50,7 @@ export default async function ProfilePage() {
             <UserCheck className="h-6 w-6" />
           </div>
           <div>
-            <h1 className="text-2xl font-black text-slate-800">Your VoxPoll Profile</h1>
+            <h1 className="text-2xl font-black text-slate-800">Your VoTI Profile</h1>
             <p className="text-sm text-slate-500">
               Provide your details to enable regional and age demographics analysis on polls.
             </p>

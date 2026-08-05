@@ -13,9 +13,11 @@ interface Option {
 interface PollVotingFormProps {
   pollId: string;
   options: Option[];
+  isClosed?: boolean;
 }
 
-export default function PollVotingForm({ pollId, options }: PollVotingFormProps) {
+export default function PollVotingForm({ pollId, options, isClosed = false }: PollVotingFormProps) {
+
   const router = useRouter();
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -32,7 +34,7 @@ export default function PollVotingForm({ pollId, options }: PollVotingFormProps)
     setError(null);
     setSuccess(null);
 
-    const result = await submitVote(pollId, selectedOptionId);
+    const result = await submitVote(pollId, [selectedOptionId]);
 
     setLoading(false);
     if (result.success) {
