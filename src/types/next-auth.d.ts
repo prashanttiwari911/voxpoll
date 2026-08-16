@@ -7,14 +7,18 @@ declare module "next-auth" {
       role: string;
       age?: number | null;
       address?: string | null;
+      gender?: string | null;
+      occupation?: string | null;
     } & DefaultSession["user"];
   }
 
-  interface User {
+  interface User extends DefaultUser {
     id: string;
     role: string;
     age?: number | null;
     address?: string | null;
+    gender?: string | null;
+    occupation?: string | null;
   }
 }
 
@@ -24,5 +28,7 @@ declare module "next-auth/jwt" {
     role: string;
     age?: number | null;
     address?: string | null;
+    gender?: string | null;
+    occupation?: string | null;
   }
 }

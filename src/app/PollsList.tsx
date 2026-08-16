@@ -5,7 +5,7 @@ import Link from "next/link";
 import {
   Search, Flame, ArrowRight, BookOpen, GraduationCap, Trophy,
   Gavel, HelpCircle, SlidersHorizontal, Clock, Laptop, HeartPulse,
-  X, Filter,
+  X, Filter, Users
 } from "lucide-react";
 
 interface Option { id: string; text: string }
@@ -93,225 +93,163 @@ export default function PollsList({ initialPolls }: PollsListProps) {
 
   return (
     <div className="space-y-6">
-      {/* ── Filter Panel ── */}
-      <div className="bg-white border border-indigo-50 p-5 rounded-3xl shadow-sm space-y-4">
-        {/* Top row: search + sort + toggle */}
-        <div className="flex flex-col sm:flex-row gap-3">
-          {/* Search */}
-          <div className="relative flex-1">
-            <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
-            <input
-              type="text"
-              id="polls-search-input"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search polls…"
-              className="w-full pl-10 pr-4 py-2.5 rounded-2xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm text-slate-800 transition-all"
-            />
-            {search && (
-              <button onClick={() => setSearch("")} className="absolute right-3 top-3 text-slate-400 hover:text-slate-600">
-                <X className="h-4 w-4" />
-              </button>
-            )}
-          </div>
-
-          {/* Sort */}
-          <div className="flex items-center gap-1 bg-slate-100 rounded-2xl p-1 shrink-0">
-            <SlidersHorizontal className="h-3.5 w-3.5 text-slate-400 ml-1.5" />
-            {(["newest", "most_active", "closing_soon"] as SortKey[]).map((s) => (
-              <button
-                key={s}
-                id={`sort-${s}-btn`}
-                onClick={() => setSort(s)}
-                className={`py-1.5 px-3 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
-                  sort === s ? "bg-white text-slate-800 shadow-sm" : "text-slate-500 hover:text-slate-700"
-                }`}
-              >
-                {s === "newest" ? "Newest" : s === "most_active" ? "Most Active" : "Closing Soon"}
-              </button>
-            ))}
-          </div>
-
-          {/* Filter toggle */}
-          <button
-            onClick={() => setShowFilters((v) => !v)}
-            className={`flex items-center gap-1.5 px-3 py-2.5 rounded-2xl text-xs font-bold transition-all shrink-0 ${
-              showFilters || selectedCategory !== "ALL" || selectedStatus !== "ALL"
-                ? "bg-indigo-600 text-white"
-                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-            }`}
-          >
-            <Filter className="h-3.5 w-3.5" />
-            Filters
-            {(selectedCategory !== "ALL" || selectedStatus !== "ALL") && (
-              <span className="bg-white/30 text-white text-[9px] font-black px-1 rounded-full">
-                {[selectedCategory !== "ALL", selectedStatus !== "ALL"].filter(Boolean).length}
-              </span>
-            )}
-          </button>
-        </div>
-
-        {/* Expandable filter panel */}
-        {showFilters && (
-          <div className="space-y-3 pt-3 border-t border-slate-100">
-            {/* Category chips */}
-            <div>
-              <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-2 block">Category</span>
-              <div className="flex flex-wrap gap-2">
-                <button
-                  id="category-all-btn"
-                  onClick={() => setCategory("ALL")}
-                  className={`py-1.5 px-3 rounded-xl text-xs font-black transition-all ${
-                    selectedCategory === "ALL"
-                      ? "bg-slate-800 text-white shadow-sm"
-                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                  }`}
-                >
-                  All
-                </button>
-                {Object.entries(CATEGORY_MAP).map(([key, val]) => {
-                  const Icon = val.icon;
-                  return (
-                    <button
-                      key={key}
-                      id={`category-${key.toLowerCase()}-btn`}
-                      onClick={() => setCategory(key)}
-                      className={`py-1.5 px-3 rounded-xl text-xs font-black flex items-center gap-1.5 transition-all ${
-                        selectedCategory === key
-                          ? "bg-indigo-600 text-white shadow-sm"
-                          : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                      }`}
-                    >
-                      <Icon className="h-3 w-3" />
-                      {val.label}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Status chips */}
-            <div>
-              <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-2 block">Status</span>
-              <div className="flex flex-wrap gap-2">
-                {["ALL", "PUBLISHED", "CLOSED", "DRAFT"].map((s) => (
-                  <button
-                    key={s}
-                    onClick={() => setStatus(s)}
-                    className={`py-1.5 px-3 rounded-xl text-xs font-bold transition-all ${
-                      selectedStatus === s
-                        ? "bg-indigo-600 text-white shadow-sm"
-                        : s === "ALL"
-                          ? "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                          : `border ${STATUS_STYLES[s]} hover:opacity-80`
-                    }`}
-                  >
-                    {s === "ALL" ? "All Statuses" : s}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Clear */}
-            {hasActiveFilters && (
-              <button onClick={clearFilters} className="text-xs text-red-500 hover:text-red-700 font-bold flex items-center gap-1">
-                <X className="h-3 w-3" /> Clear all filters
-              </button>
-            )}
-          </div>
-        )}
-
-        {/* Result count */}
-        <div className="flex items-center justify-between pt-1 text-xs text-slate-400">
-          <span>
-            {sorted.length === initialPolls.length
-              ? `${sorted.length} polls`
-              : `${sorted.length} of ${initialPolls.length} polls`}
-          </span>
-          {hasActiveFilters && (
-            <button onClick={clearFilters} className="text-indigo-500 hover:text-indigo-700 font-bold flex items-center gap-1">
-              <X className="h-3 w-3" /> Reset
+      {/* ── Compact Filter Panel ── */}
+      <div className="bg-white border border-slate-200 p-3 rounded-2xl shadow-sm flex flex-col md:flex-row gap-3 items-center">
+        {/* Search */}
+        <div className="relative flex-1 w-full">
+          <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+          <input
+            type="text"
+            id="polls-search-input"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search polls…"
+            className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm text-slate-800 transition-all bg-slate-50 focus:bg-white"
+          />
+          {search && (
+            <button onClick={() => setSearch("")} className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600">
+              <X className="h-4 w-4" />
             </button>
           )}
         </div>
+
+        {/* Categories (Scrollable) */}
+        <div className="flex-1 w-full overflow-x-auto no-scrollbar flex items-center gap-1.5 pb-1 md:pb-0">
+          <button
+            onClick={() => setCategory("ALL")}
+            className={`py-1.5 px-3 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${
+              selectedCategory === "ALL"
+                ? "bg-slate-800 text-white"
+                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+            }`}
+          >
+            All Categories
+          </button>
+          {Object.entries(CATEGORY_MAP).map(([key, val]) => (
+            <button
+              key={key}
+              onClick={() => setCategory(key)}
+              className={`py-1.5 px-3 rounded-lg text-xs font-bold whitespace-nowrap flex items-center gap-1.5 transition-all ${
+                selectedCategory === key
+                  ? "bg-indigo-600 text-white"
+                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+              }`}
+            >
+              {val.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Sort */}
+        <div className="flex items-center gap-2 w-full md:w-auto shrink-0 border-t md:border-t-0 md:border-l border-slate-100 pt-2 md:pt-0 md:pl-3">
+          <span className="text-xs font-semibold text-slate-400 hidden lg:inline-block">Sort:</span>
+          <select
+            value={sort}
+            onChange={(e) => setSort(e.target.value as SortKey)}
+            className="bg-slate-100 text-slate-700 text-xs font-bold py-2 px-3 rounded-xl border-none focus:ring-2 focus:ring-indigo-400 outline-none w-full md:w-auto cursor-pointer"
+          >
+            <option value="newest">Newest</option>
+            <option value="most_active">Most Active</option>
+            <option value="closing_soon">Closing Soon</option>
+          </select>
+        </div>
       </div>
+
+      {hasActiveFilters && (
+        <div className="flex justify-between items-center text-xs px-2">
+          <span className="text-slate-500 font-medium">
+            Found {sorted.length} {sorted.length === 1 ? 'poll' : 'polls'}
+          </span>
+          <button onClick={clearFilters} className="text-indigo-600 font-bold hover:underline flex items-center gap-1">
+            <X className="h-3 w-3" /> Clear filters
+          </button>
+        </div>
+      )}
 
       {/* ── Poll Cards ── */}
       {sorted.length === 0 ? (
-        <div className="text-center py-16 bg-white border border-indigo-50 rounded-3xl shadow-sm text-slate-400">
-          <HelpCircle className="h-10 w-10 text-slate-300 mx-auto mb-3" />
-          <span className="block font-bold">No polls match your filters.</span>
-          <span className="text-xs">Try adjusting the search or category.</span>
+        <div className="text-center py-20 bg-white border border-slate-200 rounded-3xl shadow-sm">
+          <HelpCircle className="h-12 w-12 text-slate-300 mx-auto mb-4" />
+          <span className="block font-bold text-slate-700 text-lg">No polls found</span>
+          <span className="text-sm text-slate-500 mt-1">There aren't any polls matching your search.</span>
+          {hasActiveFilters && (
+            <button onClick={clearFilters} className="mt-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2 px-4 rounded-xl text-xs transition-colors">
+              Explore All Polls
+            </button>
+          )}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {sorted.map((poll) => {
             const cat = CATEGORY_MAP[poll.category] ?? CATEGORY_MAP.OTHER;
-            const Icon = cat.icon;
             const closed = isPollClosed(poll);
 
             return (
               <div
                 key={poll.id}
-                className={`bg-white border rounded-3xl p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group ${
-                  closed ? "border-slate-200 opacity-80" : "border-indigo-50 hover:border-indigo-200"
+                className={`group bg-white border rounded-2xl p-5 transition-all flex flex-col justify-between ${
+                  closed 
+                    ? "border-slate-100 border-t-4 border-t-slate-300 bg-slate-50/50" 
+                    : "border-slate-100 border-t-4 border-t-indigo-500 hover:border-indigo-300 hover:border-t-indigo-600 hover:shadow-md"
                 }`}
               >
                 <div>
-                  {/* Top row: category + status */}
-                  <div className="flex justify-between items-center mb-3 flex-wrap gap-2">
-                    <span className={`inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-[10px] font-black border uppercase tracking-wider ${cat.color} ${cat.bg}`}>
-                      <Icon className="h-3 w-3" />
+                  {/* Top bar: Category + Status */}
+                  <div className="flex justify-between items-start mb-4">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">
                       {cat.label}
                     </span>
-
                     {closed ? (
-                      <span className="inline-flex items-center gap-1 py-0.5 px-2.5 rounded-full text-[10px] font-black bg-red-50 text-red-600 border border-red-100">
-                        <Clock className="h-2.5 w-2.5" /> CLOSED
+                      <span className="bg-slate-200 text-slate-600 text-[9px] font-black px-2 py-1 rounded-md tracking-wider">
+                        CLOSED
                       </span>
                     ) : poll.status === "DRAFT" ? (
-                      <span className="inline-flex items-center gap-1 py-0.5 px-2.5 rounded-full text-[10px] font-black bg-slate-100 text-slate-500 border border-slate-200">
+                      <span className="bg-slate-100 text-slate-500 text-[9px] font-black px-2 py-1 rounded-md tracking-wider">
                         DRAFT
                       </span>
-                    ) : poll.closesAt ? (
-                      <span className="inline-flex items-center gap-1 py-0.5 px-2.5 rounded-full text-[10px] font-semibold bg-amber-50 text-amber-600 border border-amber-100">
-                        <Clock className="h-2.5 w-2.5" />
-                        Closes {new Date(poll.closesAt).toLocaleDateString()}
-                      </span>
                     ) : (
-                      <span className="text-[10px] text-slate-400 font-semibold">
-                        {new Date(poll.createdAt).toLocaleDateString()}
+                      <span className="bg-emerald-100 text-emerald-700 text-[9px] font-black px-2 py-1 rounded-md tracking-wider">
+                        ACTIVE
                       </span>
                     )}
                   </div>
 
                   {/* Question */}
-                  <h4 className="font-extrabold text-slate-800 text-base group-hover:text-indigo-600 transition-colors leading-tight mb-2">
+                  <h4 className={`font-extrabold text-lg leading-snug mb-3 transition-colors ${
+                    closed ? "text-slate-600" : "text-slate-800 group-hover:text-indigo-700"
+                  }`}>
                     {poll.question}
                   </h4>
-
-                  {poll.description && (
-                    <p className="text-xs text-slate-500 line-clamp-2 mb-4 leading-relaxed">
-                      {poll.description}
-                    </p>
-                  )}
+                  
+                  {/* Options preview (count) */}
+                  <div className="text-xs font-semibold text-slate-500 mb-5">
+                    {poll.options.length} options
+                  </div>
                 </div>
 
-                {/* Footer */}
-                <div className="flex items-center justify-between border-t border-slate-50 pt-3 mt-4 text-xs font-semibold text-slate-500">
-                  <div className="flex items-center gap-1">
-                    <Flame className="h-4 w-4 text-orange-500 animate-pulse" />
-                    <span>{poll._count.votes} {poll._count.votes === 1 ? "vote" : "votes"}</span>
-                    {poll.creator.name && (
-                      <span className="text-slate-300 ml-2">· {poll.creator.name}</span>
+                {/* Footer metrics & CTA */}
+                <div className="flex items-center justify-between border-t border-slate-100 pt-4 mt-auto">
+                  <div className="flex items-center gap-4 text-xs font-semibold text-slate-500">
+                    <div className="flex items-center gap-1.5">
+                      <Users className="h-4 w-4 text-slate-400" />
+                      <span>{poll._count.votes} votes</span>
+                    </div>
+                    {poll.closesAt && !closed && (
+                      <div className="flex items-center gap-1.5">
+                        <Clock className="h-4 w-4 text-slate-400" />
+                        <span>{Math.ceil((new Date(poll.closesAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24))} days left</span>
+                      </div>
                     )}
                   </div>
+                  
                   <Link
                     href={`/polls/${poll.id}`}
-                    className="inline-flex items-center gap-1 text-indigo-600 hover:text-indigo-800 font-bold transition-all"
+                    className={`inline-flex items-center gap-1 text-sm font-bold transition-all ${
+                      closed ? "text-slate-500 hover:text-slate-700" : "text-indigo-600 hover:text-indigo-800"
+                    }`}
                   >
                     <span>{closed ? "View Results" : "Participate"}</span>
-                    <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                   </Link>
                 </div>
               </div>

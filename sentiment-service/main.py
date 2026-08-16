@@ -1,5 +1,8 @@
+
 from fastapi import FastAPI
+
 from pydantic import BaseModel
+
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 app = FastAPI(title="VoTI Sentiment Analysis Service")

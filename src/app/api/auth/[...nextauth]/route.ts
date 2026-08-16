@@ -39,6 +39,8 @@ export const authOptions: NextAuthOptions = {
         name: { label: "Name", type: "text" },
         age: { label: "Age", type: "text" },
         address: { label: "Address", type: "text" },
+        gender: { label: "Gender", type: "text" },
+        occupation: { label: "Occupation", type: "text" },
       },
       async authorize(credentials) {
         if (!credentials?.email) return null;
@@ -58,14 +60,18 @@ export const authOptions: NextAuthOptions = {
               name: credentials.name || "Demo User",
               age: parsedAge,
               address: credentials.address || "Localhost",
+              gender: credentials.gender || null,
+              occupation: credentials.occupation || null,
             },
           });
         } else {
           // If they exist, let's update their details based on the form input
-          const updateData: { age?: number | null; address?: string | null; name?: string | null } = {};
+          const updateData: { age?: number | null; address?: string | null; name?: string | null; gender?: string | null; occupation?: string | null } = {};
           if (credentials.age) updateData.age = parsedAge;
           if (credentials.address) updateData.address = credentials.address;
           if (credentials.name) updateData.name = credentials.name;
+          if (credentials.gender) updateData.gender = credentials.gender;
+          if (credentials.occupation) updateData.occupation = credentials.occupation;
 
           user = await db.user.update({
             where: { id: user.id },
@@ -81,6 +87,8 @@ export const authOptions: NextAuthOptions = {
           image: `https://api.dicebear.com/7.x/fun-emoji/svg?seed=${user.name || "user"}&backgroundColor=b6e3f4,c0aade,d1d4f9`,
           age: user.age,
           address: user.address,
+          gender: user.gender,
+          occupation: user.occupation,
           role: user.role,
         };
       },
@@ -92,17 +100,21 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
         token.age = user.age;
         token.address = user.address;
+        token.gender = user.gender;
+        token.occupation = user.occupation;
         token.role = (user as any).role || "USER"; // Default if not immediately available on NextAuth User object
       } else if (token?.email) {
         // Query the database to retrieve latest age and address details
         const dbUser = await db.user.findUnique({
           where: { email: token.email },
-          select: { id: true, age: true, address: true, role: true },
+          select: { id: true, age: true, address: true, gender: true, occupation: true, role: true },
         });
         if (dbUser) {
           token.id = dbUser.id;
           token.age = dbUser.age;
           token.address = dbUser.address;
+          token.gender = dbUser.gender;
+          token.occupation = dbUser.occupation;
           token.role = dbUser.role;
         }
       }
@@ -113,6 +125,8 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.id;
         session.user.age = token.age;
         session.user.address = token.address;
+        session.user.gender = token.gender;
+        session.user.occupation = token.occupation;
         session.user.role = token.role;
       }
       return session;

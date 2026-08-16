@@ -5,7 +5,8 @@ import PollVotingForm from "./PollVotingForm";
 import PollResults from "./PollResults";
 import type { TrendDataPoint } from "./PollResults";
 import PollAdminPanel from "./PollAdminPanel";
-import CopyLinkButton from "./CopyLinkButton";
+import SharePollModal from "./SharePollModal";
+import PresenterMode from "./PresenterMode";
 import CommentsSection from "./CommentsSection";
 import type { CommentData } from "./CommentsSection";
 import Link from "next/link";
@@ -154,29 +155,37 @@ export default async function PollPage({ params }: PageProps) {
 
       <div className="bg-white border border-indigo-50 rounded-3xl shadow-xl overflow-hidden">
         {/* Category Header */}
-        <div className="bg-gradient-to-r from-indigo-500 via-indigo-600 to-violet-600 p-6 text-white sm:px-8">
-          <div className="flex items-center gap-3 flex-wrap">
-            <span className="bg-white/20 text-white font-extrabold text-xs uppercase tracking-wider px-3 py-1 rounded-full">
-              {poll.category}
-            </span>
-            {/* Closing badge */}
-            {closingInfo && (
-              <span
-                className={`font-extrabold text-xs px-3 py-1 rounded-full flex items-center gap-1 ${
-                  closingInfo.isClosed
-                    ? "bg-red-500/30 text-red-100"
-                    : "bg-amber-400/30 text-amber-100"
-                }`}
-              >
-                <Clock className="h-3 w-3" />
-                {closingInfo.label}
+        <div className="bg-gradient-to-r from-indigo-500 via-indigo-600 to-violet-600 text-white relative">
+          {poll.imageUrl && (
+            <div className="w-full h-48 sm:h-64 relative">
+              <img src={poll.imageUrl} alt={poll.question} className="w-full h-full object-cover opacity-80" />
+              <div className="absolute inset-0 bg-gradient-to-t from-indigo-600 to-transparent"></div>
+            </div>
+          )}
+          <div className={`p-6 sm:px-8 relative z-10 ${poll.imageUrl ? '-mt-16' : ''}`}>
+            <div className="flex items-center gap-3 flex-wrap">
+              <span className="bg-white/20 text-white font-extrabold text-xs uppercase tracking-wider px-3 py-1 rounded-full backdrop-blur-sm shadow-sm">
+                {poll.category}
               </span>
+              {/* Closing badge */}
+              {closingInfo && (
+                <span
+                  className={`font-extrabold text-xs px-3 py-1 rounded-full flex items-center gap-1 backdrop-blur-sm shadow-sm ${
+                    closingInfo.isClosed
+                      ? "bg-red-500/80 text-white"
+                      : "bg-amber-400/80 text-amber-900"
+                  }`}
+                >
+                  <Clock className="h-3 w-3" />
+                  {closingInfo.label}
+                </span>
+              )}
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black mt-4 leading-tight drop-shadow-md">{poll.question}</h1>
+            {poll.description && (
+              <p className="mt-3 text-indigo-100 text-sm leading-relaxed max-w-3xl drop-shadow">{poll.description}</p>
             )}
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black mt-3 leading-tight">{poll.question}</h1>
-          {poll.description && (
-            <p className="mt-2 text-indigo-100 text-sm leading-relaxed">{poll.description}</p>
-          )}
         </div>
 
         {/* Info badges */}
@@ -194,20 +203,30 @@ export default async function PollPage({ params }: PageProps) {
               <MessageCircle className="h-3.5 w-3.5 text-emerald-500" />
               <span>{totalVotes} {totalVotes === 1 ? "response" : "responses"}</span>
             </div>
-            {/* Copy link button */}
-            <CopyLinkButton pollId={poll.id} />
-            {/* CSV download — creator only */}
+            {/* Share button (Modal with QR & ShortCode) */}
+            <SharePollModal pollId={poll.id} shortCode={poll.shortCode} />
+            
+            {/* Presenter Mode and CSV download — creator only */}
             {isCreator && (
-              <a
-                id="poll-csv-export-btn"
-                href={`/api/polls/${poll.id}/export`}
-                download
-                className="inline-flex items-center space-x-1.5 text-xs font-bold px-3 py-1.5 rounded-xl border border-emerald-200 bg-white text-emerald-700 hover:bg-emerald-50 transition-all"
-                title="Download votes as CSV"
-              >
-                <Download className="h-3.5 w-3.5" />
-                <span>Export CSV</span>
-              </a>
+              <>
+                <PresenterMode 
+                  pollId={poll.id} 
+                  question={poll.question} 
+                  shortCode={poll.shortCode} 
+                  totalVotes={totalVotes} 
+                  options={optionsResults} 
+                />
+                <a
+                  id="poll-csv-export-btn"
+                  href={`/api/polls/${poll.id}/export`}
+                  download
+                  className="inline-flex items-center space-x-1.5 text-xs font-bold px-3 py-1.5 rounded-xl border border-emerald-200 bg-white text-emerald-700 hover:bg-emerald-50 transition-all"
+                  title="Download votes as CSV"
+                >
+                  <Download className="h-3.5 w-3.5" />
+                  <span>Export CSV</span>
+                </a>
+              </>
             )}
           </div>
         </div>

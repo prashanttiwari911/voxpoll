@@ -23,7 +23,7 @@ export default async function NewPollPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto my-12 px-4 sm:px-6">
+    <div className="max-w-6xl mx-auto my-12 px-4 sm:px-6">
       <Link
         href="/"
         className="inline-flex items-center space-x-1.5 text-sm font-medium text-slate-400 hover:text-indigo-600 mb-6 transition-colors"

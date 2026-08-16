@@ -16,6 +16,8 @@ export default function DevLoginConsole() {
   const [email, setEmail] = useState("");
   const [age, setAge] = useState("");
   const [address, setAddress] = useState("");
+  const [gender, setGender] = useState("");
+  const [occupation, setOccupation] = useState("");
   const [magicEmail, setMagicEmail] = useState("");
   const [magicSent, setMagicSent] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -31,6 +33,8 @@ export default function DevLoginConsole() {
       name,
       age,
       address,
+      gender,
+      occupation,
       callbackUrl: "/dashboard",
     });
     setLoading(false);
@@ -182,6 +186,24 @@ export default function DevLoginConsole() {
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 placeholder="City/Region"
+                className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-1 focus:ring-indigo-500 text-slate-800"
+              />
+              <select
+                value={gender}
+                onChange={(e) => setGender(e.target.value)}
+                className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-1 focus:ring-indigo-500 text-slate-800"
+              >
+                <option value="">Select Gender</option>
+                <option value="MALE">Male</option>
+                <option value="FEMALE">Female</option>
+                <option value="OTHER">Other</option>
+                <option value="PREFER_NOT_TO_SAY">Prefer not to say</option>
+              </select>
+              <input
+                type="text"
+                value={occupation}
+                onChange={(e) => setOccupation(e.target.value)}
+                placeholder="Occupation"
                 className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-1 focus:ring-indigo-500 text-slate-800"
               />
             </div>

@@ -3,8 +3,10 @@ import { authOptions } from "./api/auth/[...nextauth]/route";
 import { db } from "@/lib/db";
 import PollsList from "./PollsList";
 import DevLoginConsole from "./DevLoginConsole";
+import TutorialsSection from "./TutorialsSection";
+import LiveDemo from "./LiveDemo";
 import Link from "next/link";
-import { ArrowRight, Sparkles, LayoutDashboard, PlusCircle, CheckCircle } from "lucide-react";
+import { ArrowRight, Sparkles, LayoutDashboard, PlusCircle, CheckCircle, Newspaper } from "lucide-react";
 
 // Auto-seed function to ensure the developer has sample polls on initial load
 async function seedPollsIfNeeded() {
@@ -124,113 +126,157 @@ export default async function Home() {
   // Prepare polls with status for PollsList
   const pollsWithStatus = polls.map((p) => ({ ...p, status: p.status ?? "PUBLISHED" }));
 
-
   return (
-    <div className="flex-1 flex flex-col space-y-12 pb-16">
-      {/* 1. Hero Banner */}
-      <section className="bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-800 text-white py-16 px-4 relative overflow-hidden rounded-b-[40px] shadow-lg">
-        {/* Decorative Circles */}
-        <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-500/20 rounded-full blur-3xl transform translate-x-20 -translate-y-20 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-60 h-60 bg-pink-500/15 rounded-full blur-3xl transform -translate-x-20 translate-y-20 pointer-events-none" />
+    <div className="flex-1 flex flex-col pb-16 bg-white">
+      {/* 1. Clean Hero Section with Image */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="text-center lg:text-left space-y-8">
+            <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black tracking-tighter text-zinc-900 leading-[1.1]">
+              YOUR VOICE.<br />
+              <span className="text-indigo-600">YOUR VOTE.</span>
+            </h1>
 
-        <div className="max-w-4xl mx-auto text-center space-y-6 relative z-10">
-          <div className="inline-flex items-center space-x-1 bg-white/10 backdrop-blur-sm border border-white/20 py-1.5 px-4 rounded-full text-xs font-extrabold text-amber-200">
-            <Sparkles className="h-4 w-4 text-amber-300 animate-spin" />
-            <span>Interactive Real-time Polling App</span>
-          </div>
+            <p className="text-xl sm:text-2xl text-zinc-500 max-w-xl mx-auto lg:mx-0 font-medium leading-relaxed">
+              Ask questions, collect opinions, and discover what people think in real time.
+            </p>
 
-          <h1 className="text-4xl sm:text-6xl font-black tracking-tight leading-tight">
-            Make Your Voice Heard on <span className="underline decoration-pink-400 decoration-wavy">VoTI</span>
-          </h1>
-
-          <p className="text-base sm:text-lg text-indigo-100 max-w-2xl mx-auto leading-relaxed">
-            Create custom polls, cast anonymous votes, and view live geographic & age demographics.
-            Explore polls about Education, Sports, Politics, and Books!
-          </p>
-
-          {session ? (
-            <div className="flex flex-wrap justify-center gap-4 pt-4">
+            <div className="flex flex-col sm:flex-row justify-center lg:justify-start items-center gap-4 pt-6">
               <Link
                 href="/polls/new"
-                className="bg-pink-500 hover:bg-pink-600 text-white font-black px-6 py-3.5 rounded-2xl flex items-center space-x-2 text-sm shadow-lg shadow-pink-500/25 transform active:scale-95 transition-all"
+                className="w-full sm:w-auto bg-zinc-900 hover:bg-zinc-800 text-white font-bold px-8 py-4 rounded-full flex items-center justify-center space-x-2 text-lg transition-transform active:scale-95 shadow-lg shadow-zinc-900/20"
               >
-                <PlusCircle className="h-4 w-4" />
-                <span>Launch a Poll</span>
+                <span>Create a Poll</span>
+                <ArrowRight className="h-5 w-5 ml-1" />
               </Link>
               <Link
-                href="/dashboard"
-                className="bg-white/10 hover:bg-white/20 border border-white/25 text-white font-black px-6 py-3.5 rounded-2xl flex items-center space-x-2 text-sm transform active:scale-95 transition-all"
+                href="/join"
+                className="w-full sm:w-auto bg-white border-2 border-zinc-200 hover:border-zinc-300 hover:bg-zinc-50 text-zinc-900 font-bold px-8 py-4 rounded-full flex items-center justify-center space-x-2 text-lg transition-all active:scale-95"
               >
-                <LayoutDashboard className="h-4 w-4" />
-                <span>My Dashboard</span>
+                <span>Join a Poll</span>
               </Link>
             </div>
-          ) : (
-            <div className="pt-4">
-              <a
-                href="#auth-section"
-                className="bg-white text-indigo-700 hover:bg-indigo-50 font-black px-7 py-3.5 rounded-2xl inline-flex items-center space-x-2 text-sm shadow-lg shadow-black/10 transform active:scale-95 transition-all"
-              >
-                <span>Get Started Now</span>
-                <ArrowRight className="h-4 w-4" />
-              </a>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* 2. Main Portal */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Left panel: Polls List */}
-          <div className="lg:col-span-8 space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-black text-slate-800">Explore Active Polls</h2>
-              <span className="text-xs bg-indigo-50 text-indigo-600 font-extrabold py-1 px-3 rounded-full border border-indigo-100">
-                {pollsWithStatus.length} Polls
-              </span>
-            </div>
-            
-            <PollsList initialPolls={pollsWithStatus} />
           </div>
-
-          {/* Right panel: Authentication Portal */}
-          {!session && (
-            <div className="lg:col-span-4 lg:sticky lg:top-20">
-              <DevLoginConsole />
-            </div>
-          )}
-
-          {session && (
-            <div className="lg:col-span-4 lg:sticky lg:top-20 bg-white border border-indigo-50 rounded-3xl p-6 shadow-md text-center space-y-4">
-              <div className="flex justify-center">
-                <div className="bg-emerald-100 text-emerald-800 p-3 rounded-full">
-                  <CheckCircle className="h-6 w-6" />
+          
+          <div className="relative hidden md:block">
+            <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500 to-violet-500 rounded-3xl blur-3xl opacity-20 animate-pulse"></div>
+            <img 
+              src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=2070" 
+              alt="People looking at analytics on screen" 
+              className="relative z-10 w-full h-[500px] object-cover rounded-3xl shadow-2xl border-4 border-white transform hover:scale-[1.02] transition-transform duration-500"
+            />
+            {/* Floating UI Elements for interactivity feel */}
+            <div className="absolute -left-8 top-12 bg-white p-4 rounded-2xl shadow-xl z-20 animate-bounce" style={{ animationDuration: '3s' }}>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center">👍</div>
+                <div>
+                  <div className="h-2 w-16 bg-slate-200 rounded-full mb-2"></div>
+                  <div className="h-2 w-10 bg-slate-200 rounded-full"></div>
                 </div>
               </div>
-              <h3 className="font-extrabold text-slate-800 text-lg">You are signed in!</h3>
-              <p className="text-xs text-slate-500">
-                Logged in as <strong>{session.user.name}</strong> ({session.user.email}). Complete your profile details to participate in analytics!
-              </p>
-              
-              <div className="flex flex-col gap-2 pt-2">
-                <Link
-                  href="/dashboard"
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl text-xs shadow-md transition-colors"
-                >
-                  Go to Dashboard
-                </Link>
-                <Link
-                  href="/profile"
-                  className="bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-2.5 rounded-xl text-xs transition-colors"
-                >
-                  Edit Profile Details
-                </Link>
+            </div>
+            <div className="absolute -right-8 bottom-24 bg-white p-4 rounded-2xl shadow-xl z-20 animate-bounce" style={{ animationDuration: '4s', animationDelay: '1s' }}>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center">📊</div>
+                <div>
+                  <div className="h-2 w-20 bg-slate-200 rounded-full mb-2"></div>
+                  <div className="h-2 w-12 bg-slate-200 rounded-full"></div>
+                </div>
               </div>
             </div>
-          )}
+          </div>
         </div>
       </section>
+
+      {/* 2. Three-Step Workflow */}
+      <section className="py-20 bg-zinc-50 border-y border-zinc-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-black text-zinc-900">How VoTI Works</h2>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+            {/* Step 1 */}
+            <div className="space-y-4">
+              <div className="mx-auto w-16 h-16 bg-white border-2 border-zinc-200 rounded-2xl flex items-center justify-center shadow-sm text-2xl font-black text-zinc-400">
+                1
+              </div>
+              <h3 className="text-xl font-bold text-zinc-900">Create</h3>
+              <p className="text-zinc-500 font-medium px-4">
+                Create a question and add your voting options in seconds.
+              </p>
+            </div>
+            
+            {/* Step 2 */}
+            <div className="space-y-4">
+              <div className="mx-auto w-16 h-16 bg-white border-2 border-indigo-100 rounded-2xl flex items-center justify-center shadow-sm text-2xl font-black text-indigo-400">
+                2
+              </div>
+              <h3 className="text-xl font-bold text-zinc-900">Share & Vote</h3>
+              <p className="text-zinc-500 font-medium px-4">
+                Share a link, poll code, or QR code and collect votes instantly.
+              </p>
+            </div>
+            
+            {/* Step 3 */}
+            <div className="space-y-4">
+              <div className="mx-auto w-16 h-16 bg-white border-2 border-emerald-100 rounded-2xl flex items-center justify-center shadow-sm text-2xl font-black text-emerald-400">
+                3
+              </div>
+              <h3 className="text-xl font-bold text-zinc-900">Discover</h3>
+              <p className="text-zinc-500 font-medium px-4">
+                See live results update in real-time with demographic insights.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. Live Interactive Demo */}
+      <LiveDemo />
+
+      {/* 4. Tutorial Videos */}
+      <TutorialsSection />
+
+      {/* 4. Live Polls Feed */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-20">
+        <div className="mb-10 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div>
+            <h2 className="text-3xl font-black text-zinc-900 flex items-center gap-2">
+              Live Now
+              <span className="relative flex h-3 w-3 ml-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+              </span>
+            </h2>
+            <p className="text-zinc-500 font-medium mt-1">Join the conversation</p>
+          </div>
+        </div>
+        
+        <PollsList initialPolls={pollsWithStatus} />
+      </section>
+
+      {/* 4. Final CTA */}
+      <section className="py-24 text-center px-4">
+        <h2 className="text-3xl font-black text-zinc-900 mb-8">Ready to ask your audience?</h2>
+        <Link
+          href="/polls/new"
+          className="inline-flex bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-8 py-4 rounded-full items-center justify-center space-x-2 text-lg transition-transform active:scale-95 shadow-md shadow-indigo-200"
+        >
+          <Sparkles className="h-5 w-5" />
+          <span>Create your own poll</span>
+        </Link>
+      </section>
+
+      {/* Developer Login Console - Moved to bottom, less prominent */}
+      {!session && (
+        <section className="max-w-3xl mx-auto px-4 pb-12 w-full opacity-60 hover:opacity-100 transition-opacity">
+          <div className="pt-8 border-t border-zinc-100">
+            <p className="text-center text-xs text-zinc-400 font-bold mb-4 uppercase tracking-widest">Developer Access</p>
+            <DevLoginConsole />
+          </div>
+        </section>
+      )}
     </div>
   );
 }

@@ -71,8 +71,10 @@ model User {
   image         String?
 
   // Profile fields
-  age     Int?
-  address String? // free-text region / city
+  age        Int?
+  address    String? // free-text region / city
+  gender     String? // e.g. MALE, FEMALE, OTHER, PREFER_NOT_TO_SAY
+  occupation String?
 
   // Role: "USER" | "ADMIN" | "MODERATOR"
   role String @default("USER")
@@ -114,6 +116,9 @@ model Poll {
   status      String    @default("PUBLISHED")
   closesAt    DateTime? // null = never closes automatically
   scheduledAt DateTime? // future publish date (for DRAFT → PUBLISHED transition)
+  
+  // Short code for joining
+  shortCode   String?   @unique
 
   // Media & multi-choice
   imageUrl       String?
