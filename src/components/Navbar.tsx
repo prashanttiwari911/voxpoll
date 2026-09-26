@@ -28,9 +28,9 @@ export default function Navbar() {
   return (
     <nav className="sticky top-4 z-50 mx-4 sm:mx-8 lg:mx-auto max-w-7xl bg-white/70 dark:bg-zinc-900/80 backdrop-blur-xl border border-white/40 dark:border-zinc-700/50 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.06)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.2)] transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          {/* Logo Section */}
-          <div className="flex items-center">
+        <div className="flex justify-between items-center h-16 w-full">
+          {/* Left Side: Logo & Main Links */}
+          <div className="flex items-center gap-12">
             <Link href="/" className="flex items-center space-x-2 group">
               <div className="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-2 rounded-2xl text-white shadow-lg shadow-indigo-500/30 transform group-hover:scale-105 group-hover:rotate-3 transition-all duration-300">
                 <Vote className="h-6 w-6" />
@@ -39,25 +39,28 @@ export default function Navbar() {
                 VoTI
               </span>
             </Link>
+
+            {/* Desktop Navigation (Center/Left) */}
+            <div className="hidden md:flex items-center space-x-8">
+              <Link href="/" className="text-zinc-600 dark:text-zinc-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-bold text-sm transition-colors">
+                Explore
+              </Link>
+
+              <Link href="/join"
+                className="text-zinc-600 dark:text-zinc-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-bold text-sm flex items-center gap-1.5 transition-colors"
+              >
+                <KeyRound className="h-4 w-4" />
+                Join
+              </Link>
+
+              <Link href="/help" className="text-zinc-600 dark:text-zinc-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-bold text-sm transition-colors">
+                Help
+              </Link>
+            </div>
           </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-6">
-            <Link href="/" className="text-zinc-600 dark:text-zinc-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-bold text-sm transition-colors">
-              Explore
-            </Link>
-
-            <Link href="/join"
-              className="text-zinc-600 dark:text-zinc-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-bold text-sm flex items-center gap-1.5 transition-colors"
-            >
-              <KeyRound className="h-4 w-4" />
-              Join
-            </Link>
-
-            <Link href="/help" className="text-zinc-600 dark:text-zinc-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-bold text-sm transition-colors">
-              Help
-            </Link>
-
+          {/* Right Side: Actions */}
+          <div className="hidden md:flex items-center space-x-5">
             <ThemeToggle />
 
             {session && (
