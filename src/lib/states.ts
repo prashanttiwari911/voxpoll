@@ -17,7 +17,6 @@ export const INDIA_STATES = [
   "Jharkhand",
   "Karnataka",
   "Kerala",
-  "Ladakh",
   "Lakshadweep",
   "Madhya Pradesh",
   "Maharashtra",

@@ -142,8 +142,7 @@ votes: {
   });
   const regionData = Object.entries(regionCounts)
     .map(([name, value]) => ({ name, value }))
-    .sort((a, b) => b.value - a.value)
-    .slice(0, 8);
+    .sort((a, b) => b.value - a.value);
 
   // 8. Vote trend — daily vote counts + cumulative
   const dailyCounts: { [day: string]: number } = {};

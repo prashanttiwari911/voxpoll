@@ -78,8 +78,6 @@ export default function PollResults({
   const pieData = options.map((o) => ({ name: o.text, value: o.count }));
 
   // Region bar data (horizontal) — top 8
-  const regionBarData = regionData.slice(0, 8);
-
   const noVotes = totalVotes === 0;
 
   return (
