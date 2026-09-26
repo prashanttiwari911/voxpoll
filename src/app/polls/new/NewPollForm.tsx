@@ -274,10 +274,10 @@ export default function NewPollForm() {
             
             {/* Options */}
             <div className="p-6 space-y-3 bg-zinc-50">
-              <p className="text-xs font-bold text-zinc-400 mb-4 flex items-center gap-1.5">
+              <div className="text-xs font-bold text-zinc-400 mb-4 flex items-center gap-1.5">
                 <div className="w-4 h-4 rounded border-2 border-zinc-300"></div> 
                 {isMultiple ? "Select multiple answers" : "Select one answer"}
-              </p>
+              </div>
               
               {previewOptions.map((opt, i) => (
                 <div key={i} className="bg-white border-2 border-zinc-200 p-4 rounded-2xl flex items-center gap-3">
