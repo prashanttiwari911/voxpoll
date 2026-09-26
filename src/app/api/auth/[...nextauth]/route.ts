@@ -8,6 +8,9 @@ import { db } from "@/lib/db";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(db),
+  pages: {
+    signIn: "/login",
+  },
   session: {
     strategy: "jwt",
     maxAge: 7 * 24 * 60 * 60, // 7 days
@@ -78,7 +81,7 @@ export const authOptions: NextAuthOptions = {
           where: { email: credentials.email },
         });
 
-        const parsedAge = credentials.age ? parseInt(credentials.age, 10) : null;
+        const parsedAge = credentials.age && !isNaN(parseInt(credentials.age, 10)) ? parseInt(credentials.age, 10) : null;
 
         if (!user) {
           // If the user doesn't exist, let's sign them up as a new user!
@@ -160,9 +163,7 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
-  pages: {
-    signIn: "/", // Home page acts as our sign in portal
-  },
+  
   secret: process.env.NEXTAUTH_SECRET,
 };
 
