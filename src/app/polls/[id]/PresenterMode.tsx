@@ -113,7 +113,7 @@ export default function PresenterMode({ pollId, question, shortCode, totalVotes,
         {/* Right Side: Join Info */}
         <div className="w-full lg:w-96 bg-zinc-950 p-6 lg:p-12 border-t lg:border-t-0 lg:border-l border-zinc-800 flex flex-col justify-center items-center text-center">
           <h3 className="text-xl font-bold text-zinc-400 mb-8">Join the poll at</h3>
-          <p className="text-3xl font-black text-indigo-400 break-all mb-8">{joinUrl.replace(/^https?:\/\//, '')}</p>
+          <p className="text-3xl font-black text-indigo-400 break-all mb-8">{url.replace(/^https?:\/\//, '')}</p>
           
           {shortCode && (
             <>

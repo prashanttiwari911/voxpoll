@@ -22,6 +22,6 @@ test('navigation contains essential links', async ({ page }) => {
   ).toBeVisible();
 
   await expect(
-    nav.locator('a[href="/join"]').first()
+    nav.locator('a[href="/polls/new"]').first()
   ).toBeVisible();
 });

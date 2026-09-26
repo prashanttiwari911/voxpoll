@@ -138,13 +138,6 @@ export default function SharePollModal({ pollId, shortCode, pollTitle = "Vote on
 
             {activeTab === "link" ? (
               <div className="space-y-6">
-                {shortCode && (
-                  <div className="text-center bg-indigo-50 dark:bg-indigo-900/20 rounded-2xl p-4 border border-indigo-100 dark:border-indigo-800/30">
-                    <p className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider mb-1">Poll Code</p>
-                    <p className="text-3xl font-black text-indigo-900 dark:text-indigo-100 tracking-widest">{shortCode.split('').join(' ')}</p>
-                    <p className="text-[10px] text-indigo-400 dark:text-indigo-500 mt-2">Enter this code at VoTI Join page</p>
-                  </div>
-                )}
 
                 <div className="flex flex-col items-center justify-center p-4 border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-2xl">
                   <div className="bg-white p-2 rounded-xl">
