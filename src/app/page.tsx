@@ -88,39 +88,12 @@ export default async function Home({
           <div className="relative hidden md:block">
             <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 rounded-3xl blur-3xl opacity-30 animate-pulse"></div>
             
-            {/* Main AI Analytics Image - Interactive Hover */}
             <div className="relative group perspective-1000">
               <img 
                 src="/feature_analytics.jpg" 
-                alt="AI Generated Analytics Hologram" 
-                className="relative z-10 w-full h-[500px] object-cover rounded-3xl shadow-2xl border border-white/10 dark:border-zinc-800 transform transition-all duration-700 group-hover:rotate-x-2 group-hover:rotate-y-[-2deg] group-hover:scale-[1.02] group-hover:shadow-[0_20px_50px_rgba(99,102,241,0.3)]"
+                alt="VoTI Analytics" 
+                className="relative z-10 w-full h-[500px] object-cover rounded-3xl shadow-2xl border border-white/10 dark:border-zinc-800 transform transition-all duration-700 hover:scale-[1.01] hover:shadow-[0_20px_50px_rgba(99,102,241,0.2)]"
               />
-              
-              {/* Floating AI Voting Image - Parallax / Interactive */}
-              <img 
-                src="/feature_voting.jpg" 
-                alt="AI Generated Voting Interface" 
-                className="absolute -bottom-10 -left-10 z-30 w-64 h-64 object-cover rounded-2xl shadow-2xl border border-white/20 transform transition-all duration-700 group-hover:-translate-y-8 group-hover:translate-x-4 group-hover:rotate-6 group-hover:scale-110 group-hover:shadow-[0_20px_40px_rgba(236,72,153,0.4)] "
-              />
-            </div>
-            {/* Floating UI Elements for interactivity feel */}
-            <div className="absolute -left-8 top-12 bg-white dark:bg-zinc-900 p-4 rounded-2xl shadow-xl z-20 animate-bounce border border-zinc-100 dark:border-zinc-800" style={{ animationDuration: '3s' }}>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">👍</div>
-                <div>
-                  <div className="h-2 w-16 bg-slate-200 dark:bg-zinc-700 rounded-full mb-2"></div>
-                  <div className="h-2 w-10 bg-slate-200 dark:bg-zinc-700 rounded-full"></div>
-                </div>
-              </div>
-            </div>
-            <div className="absolute -right-8 bottom-24 bg-white dark:bg-zinc-900 p-4 rounded-2xl shadow-xl z-20 animate-bounce border border-zinc-100 dark:border-zinc-800" style={{ animationDuration: '4s', animationDelay: '1s' }}>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center">📊</div>
-                <div>
-                  <div className="h-2 w-20 bg-slate-200 dark:bg-zinc-700 rounded-full mb-2"></div>
-                  <div className="h-2 w-12 bg-slate-200 dark:bg-zinc-700 rounded-full"></div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
