@@ -46,11 +46,6 @@ export default function Navbar() {
                 Explore
               </Link>
 
-              <Link href="/polls/new" className="text-zinc-600 dark:text-zinc-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-bold text-sm flex items-center gap-1.5 transition-colors">
-                <PlusCircle className="h-4 w-4" />
-                Create
-              </Link>
-
               <Link href="/help" className="text-zinc-600 dark:text-zinc-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-bold text-sm transition-colors">
                 Help
               </Link>
@@ -155,9 +150,7 @@ export default function Navbar() {
 
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center gap-4">
-            {!session && (
-              <Link href="/polls/new" className="text-zinc-700 font-bold text-sm">Create</Link>
-            )}
+            
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="text-zinc-600 hover:text-indigo-600 p-2 rounded-xl focus:outline-none"
@@ -174,9 +167,6 @@ export default function Navbar() {
           <Link href="/" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 rounded-xl text-base font-bold text-zinc-700 hover:bg-zinc-50">
             Explore Polls
           </Link>
-          <Link href="/polls/new" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-base font-bold text-zinc-700 hover:bg-zinc-50">
-              <PlusCircle className="h-5 w-5 text-zinc-400" /> Create Poll
-            </Link>
           <Link href="/help" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-base font-bold text-zinc-700 hover:bg-zinc-50">
             <HelpCircle className="h-5 w-5 text-zinc-400" /> Help & Support
           </Link>
