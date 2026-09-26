@@ -86,12 +86,23 @@ export default async function Home({
           </div>
           
           <div className="relative hidden md:block">
-            <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500 to-violet-500 rounded-3xl blur-3xl opacity-20 animate-pulse"></div>
-            <img 
-              src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=2070" 
-              alt="People looking at analytics on screen" 
-              className="relative z-10 w-full h-[500px] object-cover rounded-3xl shadow-2xl border-4 border-white dark:border-zinc-800 transform hover:scale-[1.02] transition-transform duration-500"
-            />
+            <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 rounded-3xl blur-3xl opacity-30 animate-pulse"></div>
+            
+            {/* Main AI Analytics Image - Interactive Hover */}
+            <div className="relative group perspective-1000">
+              <img 
+                src="/feature_analytics.jpg" 
+                alt="AI Generated Analytics Hologram" 
+                className="relative z-10 w-full h-[500px] object-cover rounded-3xl shadow-2xl border border-white/10 dark:border-zinc-800 transform transition-all duration-700 group-hover:rotate-x-2 group-hover:rotate-y-[-2deg] group-hover:scale-[1.02] group-hover:shadow-[0_20px_50px_rgba(99,102,241,0.3)]"
+              />
+              
+              {/* Floating AI Voting Image - Parallax / Interactive */}
+              <img 
+                src="/feature_voting.jpg" 
+                alt="AI Generated Voting Interface" 
+                className="absolute -bottom-10 -left-10 z-30 w-64 h-64 object-cover rounded-2xl shadow-2xl border border-white/20 transform transition-all duration-700 group-hover:-translate-y-8 group-hover:translate-x-4 group-hover:rotate-6 group-hover:scale-110 group-hover:shadow-[0_20px_40px_rgba(236,72,153,0.4)] "
+              />
+            </div>
             {/* Floating UI Elements for interactivity feel */}
             <div className="absolute -left-8 top-12 bg-white dark:bg-zinc-900 p-4 rounded-2xl shadow-xl z-20 animate-bounce border border-zinc-100 dark:border-zinc-800" style={{ animationDuration: '3s' }}>
               <div className="flex items-center gap-3">
