@@ -81,7 +81,7 @@ export default function RootLayout({
               </div>
 
               <div className="mt-12 pt-8 border-t border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-semibold text-zinc-600">
-                <p>Made with 💖 for India and beyond.</p>
+                <p>Made with 💖 by prashant tiwari 2253197781</p>
                 <div className="flex items-center gap-6">
                   <a href="/help" className="hover:text-zinc-400 transition-colors">Help</a>
                   <a href="/help" className="hover:text-zinc-400 transition-colors">Contact</a>
