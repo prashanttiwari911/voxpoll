@@ -65,7 +65,7 @@ export async function createPoll(
         )
       : [];
       
-    // Generate unique short code (naive retry mechanism could be added for production, but 90k space is fine for demo)
+    // Generate a short code that users can use to join the poll.
     const shortCode = generateShortCode();
 
     const parsedScheduledAt = d.scheduledAt ? new Date(d.scheduledAt) : null;

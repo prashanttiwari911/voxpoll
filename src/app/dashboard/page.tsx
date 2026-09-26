@@ -148,16 +148,16 @@ export default async function DashboardPage() {
                 <MapPin className="h-4 w-4 text-amber-400 shrink-0" />
                 <span>{user.address || <span className="text-zinc-400 italic">Region not set</span>}</span>
               </div>
-              {(user as any).gender && (
+              {user.gender && (
                 <div className="flex items-center gap-2">
                   <User className="h-4 w-4 text-indigo-400 shrink-0" />
-                  <span>{(user as any).gender}</span>
+                  <span>{user.gender}</span>
                 </div>
               )}
-              {(user as any).occupation && (
+              {user.occupation && (
                 <div className="flex items-center gap-2">
                   <Briefcase className="h-4 w-4 text-violet-400 shrink-0" />
-                  <span>{(user as any).occupation}</span>
+                  <span>{user.occupation}</span>
                 </div>
               )}
             </div>

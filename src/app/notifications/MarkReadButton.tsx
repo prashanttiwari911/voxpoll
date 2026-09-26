@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
-import { markNotificationsRead } from "../actions";
+import { markNotificationsRead } from "@/app/actions/user";
 import { CheckCheck } from "lucide-react";
 
 export default function MarkReadButton({ notificationIds }: { notificationIds: string[] }) {

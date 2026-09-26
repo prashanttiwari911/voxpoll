@@ -50,8 +50,8 @@ export default function SharePollModal({ pollId, shortCode, pollTitle = "Vote on
           url: url,
         });
         toast.success("Shared successfully!");
-      } catch (err: any) {
-        if (err.name !== "AbortError") setIsOpen(true);
+      } catch (err) {
+        if (err instanceof Error && err.name !== "AbortError") setIsOpen(true);
       }
     } else {
       setIsOpen(true);

@@ -88,7 +88,8 @@ export default function IndiaMap({ data }: IndiaMapProps) {
           {({ geographies }) =>
             geographies.map((geo) => {
               // The TopoJSON uses 2-letter codes for geo.id
-              const stateName = STATE_CODES[geo.id] || geo.id;
+              const geoId = String(geo.id);
+              const stateName = STATE_CODES[geoId as keyof typeof STATE_CODES] || geoId;
               const value = dataMap.get(stateName.toLowerCase()) || 0;
               
               return (
@@ -102,7 +103,7 @@ export default function IndiaMap({ data }: IndiaMapProps) {
                     default: { outline: "none" },
                     hover: { fill: "#34d399", outline: "none", cursor: "pointer" },
                     pressed: { outline: "none" },
-                  }}
+                  } as any}
                 />
               );
             })

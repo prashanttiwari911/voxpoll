@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { addComment, deleteComment, toggleCommentLike } from "../../actions";
+import { addComment, deleteComment, toggleCommentLike } from "@/app/actions/comment";
 import {
   MessageCircle, Send, AlertCircle, UserCircle2,
   Clock, Heart, Reply, Trash2, ChevronDown, ChevronUp,

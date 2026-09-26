@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { updateProfile } from "../actions";
+import { updateProfile } from "@/app/actions/user";
 import { User, MapPin, Calendar, Sparkles } from "lucide-react";
 import { INDIA_STATES } from "@/lib/states";
 import { toast } from "sonner";

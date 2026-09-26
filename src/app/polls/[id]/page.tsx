@@ -62,7 +62,7 @@ votes: {
     },
   });
 
-  if (!poll || (poll as any).deletedAt) {
+  if (!poll || poll.deletedAt) {
     return (
       <div className="max-w-md mx-auto my-16 px-4 py-8 bg-white border border-indigo-50 rounded-3xl shadow-xl text-center">
         <h2 className="text-2xl font-black text-slate-800">Poll Not Found 🕵️</h2>
@@ -128,7 +128,7 @@ votes: {
         dataPoint[optionText] = (dataPoint[optionText] as number) + 1;
       }
     });
-    return dataPoint as any;
+    return dataPoint;
   });
 
   // 7. Region demographics

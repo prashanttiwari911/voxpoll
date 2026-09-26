@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { deletePoll, updatePoll } from "../../actions";
+import { deletePoll, updatePoll } from "@/app/actions/poll";
 import { Trash2, Pencil, X, Save, AlertCircle, CheckCircle, Clock } from "lucide-react";
 import { toast } from "sonner";
 

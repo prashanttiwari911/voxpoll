@@ -2,109 +2,9 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]/route";
 import { db } from "@/lib/db";
 import PollsList from "./PollsList";
-import DevLoginConsole from "./DevLoginConsole";
-import TutorialsSection from "./TutorialsSection";
-import LiveDemo from "./LiveDemo";
 import Link from "next/link";
 import { ArrowRight, Sparkles, LayoutDashboard, PlusCircle, CheckCircle, Newspaper } from "lucide-react";
 
-// Auto-seed function to ensure the developer has sample polls on initial load
-async function seedPollsIfNeeded() {
-  try {
-    const pollCount = await db.poll.count();
-    if (pollCount > 0) return;
-
-    // Create system seed creator
-    let systemUser = await db.user.findUnique({
-      where: { email: "system@voti.com" },
-    });
-
-    if (!systemUser) {
-      systemUser = await db.user.create({
-        data: {
-          email: "system@voti.com",
-          name: "VoTI System",
-          age: 28,
-          address: "Delhi",
-        },
-      });
-    }
-
-    // 1. Education Poll
-    await db.poll.create({
-      data: {
-        question: "Which educational path is most crucial for students in the next decade?",
-        description: "As technology evolves, which discipline will shape the job market and global progress?",
-        category: "EDUCATION",
-        creatorId: systemUser.id,
-        options: {
-          create: [
-            { text: "Artificial Intelligence & Data Science" },
-            { text: "Climate Change Adaptation & Green Tech" },
-            { text: "Bioinformatics & Advanced Healthcare" },
-            { text: "Creative Writing, Ethics & Humanities" },
-          ],
-        },
-      },
-    });
-
-    // 2. Sports Poll
-    await db.poll.create({
-      data: {
-        question: "Which sport is expanding fastest in terms of popularity across India?",
-        description: "Beyond Cricket, which athletic event is capturing the nation's passion?",
-        category: "SPORTS",
-        creatorId: systemUser.id,
-        options: {
-          create: [
-            { text: "Football (ISL / International)" },
-            { text: "Kabaddi (Pro Kabaddi League)" },
-            { text: "Badminton & Racket Sports" },
-            { text: "Athletics & Olympic Sports" },
-          ],
-        },
-      },
-    });
-
-    // 3. Politics Poll
-    await db.poll.create({
-      data: {
-        question: "What should be the primary focus of urban development policies?",
-        description: "With growing cities, where should local budgets be prioritized first?",
-        category: "POLITICS",
-        creatorId: systemUser.id,
-        options: {
-          create: [
-            { text: "Massive public transit expansion (Metro, EV Buses)" },
-            { text: "Affordable housing projects & slum rehabilitation" },
-            { text: "Green belts, public parks & lake rejuvenation" },
-            { text: "Smart city grid integrations & sanitation" },
-          ],
-        },
-      },
-    });
-
-    // 4. Books Poll
-    await db.poll.create({
-      data: {
-        question: "What is your absolute favorite reading format?",
-        description: "From reading before bed to listening during commutes, how do you digest books?",
-        category: "BOOKS",
-        creatorId: systemUser.id,
-        options: {
-          create: [
-            { text: "Physical Hardcovers & Paperbacks 📖" },
-            { text: "E-Readers (Kindle, Kobo) 📱" },
-            { text: "Audiobooks (Audible, Spotify) 🎧" },
-            { text: "Summaries & Articles 📝" },
-          ],
-        },
-      },
-    });
-  } catch (err) {
-    console.error("Seeding failed: ", err);
-  }
-}
 
 export default async function Home({
   searchParams,
@@ -118,8 +18,7 @@ export default async function Home({
   const take = 10;
   const skip = (pageNumber - 1) * take;
 
-  // Seed the database if empty
-  await seedPollsIfNeeded();
+
 
   const polls = await db.poll.findMany({
     where: { status: "PUBLISHED", deletedAt: null }, // Only show published polls on home page
@@ -262,10 +161,10 @@ export default async function Home({
       </section>
 
       {/* 3. Live Interactive Demo */}
-      <LiveDemo />
+      
 
       {/* 4. Tutorial Videos */}
-      <TutorialsSection />
+      
 
       {/* 4. Live Polls Feed */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-20">
@@ -335,7 +234,7 @@ export default async function Home({
         <section className="max-w-3xl mx-auto px-4 pb-12 w-full opacity-60 hover:opacity-100 transition-opacity">
           <div className="pt-8 border-t border-zinc-100">
             <p className="text-center text-xs text-zinc-400 font-bold mb-4 uppercase tracking-widest">Developer Access</p>
-            <DevLoginConsole />
+            
           </div>
         </section>
       )}

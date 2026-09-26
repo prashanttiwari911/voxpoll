@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { submitVote } from "../../actions";
+import { submitVote } from "@/app/actions/vote";
 import { AlertCircle, CheckCircle, CheckSquare, Square, Circle, Dot } from "lucide-react";
 import { toast } from "sonner";
 

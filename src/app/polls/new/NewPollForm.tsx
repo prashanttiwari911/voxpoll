@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { createPoll } from "../../actions";
+import { createPoll } from "@/app/actions/poll";
 import {
   AlertCircle, Plus, Trash2, Sparkles, Clock,
-  ListChecks, CheckSquare, BarChart3,
+  ListChecks, CheckSquare, BarChart3, HelpCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -37,6 +37,10 @@ export default function NewPollForm() {
   // New fields
   const [isMultiple, setIsMultiple]   = useState(false);
   const [saveAsDraft, setSaveAsDraft] = useState(false);
+  const [scheduledAt, setScheduledAt] = useState("");
+  const [maxChoices, setMaxChoices]   = useState<number>(2);
+  const [imageUrl, setImageUrl]       = useState("");
+  const [tags, setTags]               = useState<string[]>([]);
 
   const [loading, setLoading]         = useState(false);
   const [error, setError]             = useState<string | null>(null);

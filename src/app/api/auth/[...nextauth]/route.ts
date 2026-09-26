@@ -130,7 +130,7 @@ export const authOptions: NextAuthOptions = {
         token.address = user.address;
         token.gender = user.gender;
         token.occupation = user.occupation;
-        token.role = (user as any).role || "USER"; // Default if not immediately available on NextAuth User object
+        token.role = (user as { role?: string }).role || "USER"; // Default if not immediately available on NextAuth User object
       } else if (token?.email) {
         // Query the database to retrieve latest age and address details
         const dbUser = await db.user.findUnique({
