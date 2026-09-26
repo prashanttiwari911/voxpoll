@@ -54,14 +54,14 @@ export default async function Home({
   });
 
   return (
-    <div className="flex-1 flex flex-col pb-16 bg-white dark:bg-zinc-950 transition-colors">
+    <div className="flex-1 flex flex-col pb-16 bg-transparent transition-colors">
       {/* 1. Clean Hero Section with Image */}
       <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="text-center lg:text-left space-y-8">
-            <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black tracking-tighter text-zinc-900 dark:text-white leading-[1.1]">
+            <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black tracking-tighter text-zinc-900 dark:text-white leading-[1.1] drop-shadow-sm">
               YOUR VOICE.<br />
-              <span className="text-indigo-600 dark:text-indigo-400">YOUR VOTE.</span>
+              <span className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent drop-shadow-md">YOUR VOTE.</span>
             </h1>
 
             <p className="text-xl sm:text-2xl text-zinc-500 dark:text-zinc-400 max-w-xl mx-auto lg:mx-0 font-medium leading-relaxed">
@@ -71,14 +71,14 @@ export default async function Home({
             <div className="flex flex-col sm:flex-row justify-center lg:justify-start items-center gap-4 pt-6">
               <Link
                 href="/polls/new"
-                className="w-full sm:w-auto bg-zinc-900 dark:bg-zinc-100 hover:bg-zinc-800 dark:hover:bg-white text-white dark:text-zinc-900 font-bold px-8 py-4 rounded-full flex items-center justify-center space-x-2 text-lg transition-transform active:scale-95 shadow-lg shadow-zinc-900/20 dark:shadow-zinc-100/10"
+                className="w-full sm:w-auto bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 hover:from-indigo-500 hover:via-purple-500 hover:to-pink-400 text-white font-black px-8 py-4 rounded-2xl flex items-center justify-center space-x-2 text-lg transition-all active:scale-95 shadow-xl shadow-indigo-500/20 hover:shadow-indigo-500/40 hover:-translate-y-1"
               >
                 <span>Create a Poll</span>
                 <ArrowRight className="h-5 w-5 ml-1" />
               </Link>
               <Link
                 href="/join"
-                className="w-full sm:w-auto bg-white dark:bg-zinc-900 border-2 border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-zinc-900 dark:text-white font-bold px-8 py-4 rounded-full flex items-center justify-center space-x-2 text-lg transition-all active:scale-95"
+                className="w-full sm:w-auto bg-white/50 dark:bg-zinc-900/50 backdrop-blur-md border border-zinc-200 dark:border-zinc-700 hover:border-indigo-300 dark:hover:border-indigo-600 text-zinc-900 dark:text-white font-bold px-8 py-4 rounded-2xl flex items-center justify-center space-x-2 text-lg transition-all active:scale-95 hover:-translate-y-1 hover:shadow-lg"
               >
                 <span>Join a Poll</span>
               </Link>

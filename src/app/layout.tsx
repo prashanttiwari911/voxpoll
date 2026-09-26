@@ -23,7 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${fontJakarta.variable} h-full antialiased`} suppressHydrationWarning>
-      <body className="min-h-full flex flex-col bg-slate-50 dark:bg-zinc-950 text-slate-800 dark:text-slate-100 font-sans transition-colors duration-300">
+      <body className="min-h-full flex flex-col bg-[#f8fafc] dark:bg-[#09090b] text-slate-800 dark:text-slate-100 font-sans transition-colors duration-300 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))] dark:bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.15),rgba(255,255,255,0))]">
         <Providers>
           <Toaster position="bottom-right" richColors closeButton />
           <div className="flex flex-col min-h-screen">

@@ -26,13 +26,13 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md border-b border-zinc-100 dark:border-zinc-800 shadow-sm transition-all">
+    <nav className="sticky top-4 z-50 mx-4 sm:mx-8 lg:mx-auto max-w-7xl bg-white/70 dark:bg-zinc-900/80 backdrop-blur-xl border border-white/40 dark:border-zinc-700/50 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.06)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.2)] transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           {/* Logo Section */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2 group">
-              <div className="bg-gradient-to-tr from-indigo-500 to-violet-600 p-2 rounded-xl text-white shadow-md transform group-hover:scale-105 transition-transform duration-200">
+              <div className="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-2 rounded-2xl text-white shadow-lg shadow-indigo-500/30 transform group-hover:scale-105 group-hover:rotate-3 transition-all duration-300">
                 <Vote className="h-6 w-6" />
               </div>
               <span className="text-2xl font-black text-zinc-900 dark:text-white group-hover:opacity-85 transition-opacity">
@@ -63,7 +63,7 @@ export default function Navbar() {
             {session && (
               <Link
                 href="/polls/new"
-                className="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold px-4 py-2 rounded-full flex items-center space-x-1.5 text-sm transition-all"
+                className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 hover:from-indigo-500 hover:via-purple-500 hover:to-pink-400 text-white font-black px-5 py-2.5 rounded-2xl flex items-center space-x-2 text-sm transition-all shadow-md shadow-indigo-500/20 hover:shadow-indigo-500/40 hover:-translate-y-0.5 border border-indigo-400/20"
               >
                 <PlusCircle className="h-4 w-4" />
                 <span>Create Poll</span>
@@ -145,7 +145,7 @@ export default function Navbar() {
                 onClick={() => {
                   signIn();
                 }}
-                className="bg-zinc-900 hover:bg-zinc-800 text-white font-bold py-2 px-5 rounded-full shadow-sm transform active:scale-95 transition-all text-sm"
+                className="bg-zinc-900 dark:bg-zinc-100 hover:bg-zinc-800 dark:hover:bg-white text-white dark:text-zinc-900 font-bold py-2.5 px-6 rounded-2xl shadow-lg shadow-zinc-900/20 hover:shadow-xl transform hover:-translate-y-0.5 active:scale-95 transition-all text-sm border border-zinc-800 dark:border-white/20"
               >
                 Sign In
               </button>
@@ -203,7 +203,7 @@ export default function Navbar() {
             <div className="pt-2">
               <button
                 onClick={() => { setMobileMenuOpen(false); signIn(); }}
-                className="w-full bg-zinc-900 text-white font-bold py-3 px-4 rounded-xl text-center shadow-sm"
+                className="w-full bg-zinc-900 dark:bg-zinc-100 hover:bg-zinc-800 dark:hover:bg-white text-white dark:text-zinc-900 font-bold py-3 px-4 rounded-2xl text-center shadow-lg"
               >
                 Sign In
               </button>
