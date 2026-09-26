@@ -11,6 +11,7 @@ import {
   Trophy, Users, Globe, TrendingUp, PieChart as PieIcon,
   BarChart2, Sparkles, Award,
 } from "lucide-react";
+import IndiaMap from "./IndiaMap";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -84,22 +85,22 @@ export default function PollResults({
   return (
     <div className="space-y-8">
       {/* ── Live Results ── */}
-      <div className="space-y-5 bg-white border border-slate-100 rounded-3xl p-6 shadow-sm">
-        <div className="flex justify-between items-end border-b border-slate-100 pb-3">
+      <div className="space-y-5 bg-white dark:bg-zinc-900 border border-slate-100 dark:border-zinc-800 rounded-3xl p-6 shadow-sm transition-colors">
+        <div className="flex justify-between items-end border-b border-slate-100 dark:border-zinc-800 pb-3">
           <div>
-            <h2 className="text-lg font-black text-slate-800 flex items-center gap-2">
+            <h2 className="text-lg font-black text-slate-800 dark:text-zinc-100 flex items-center gap-2">
               <span className="relative flex h-3 w-3">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
               </span>
               Live Results
             </h2>
-            <p className="text-sm text-slate-500 font-semibold mt-1">{totalVotes.toLocaleString()} total votes</p>
+            <p className="text-sm text-slate-500 dark:text-zinc-400 font-semibold mt-1">{totalVotes.toLocaleString()} total votes</p>
           </div>
         </div>
 
         {noVotes ? (
-          <p className="text-center text-slate-400 text-sm py-6">No votes yet.</p>
+          <p className="text-center text-slate-400 dark:text-zinc-500 text-sm py-6">No votes yet.</p>
         ) : (
           <div className="space-y-6">
             {sortedOptions.map((opt) => {
@@ -108,20 +109,20 @@ export default function PollResults({
                 <div key={opt.id} className="space-y-3">
                   <div className="flex justify-between items-end px-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-lg font-black text-slate-800">{opt.text}</span>
+                      <span className="text-lg font-black text-slate-800 dark:text-zinc-100">{opt.text}</span>
                       {isLeader && (
-                        <span className="inline-flex items-center gap-0.5 bg-amber-100 text-amber-700 text-xs font-black px-2.5 py-1 rounded-full uppercase">
+                        <span className="inline-flex items-center gap-0.5 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-500 text-xs font-black px-2.5 py-1 rounded-full uppercase">
                           <Sparkles className="h-3 w-3" /> Leading
                         </span>
                       )}
                     </div>
                   </div>
-                  <div className="w-full h-12 bg-slate-100 rounded-2xl overflow-hidden relative shadow-inner">
+                  <div className="w-full h-12 bg-slate-100 dark:bg-zinc-800 rounded-2xl overflow-hidden relative shadow-inner">
                     <div
                       className={`h-full rounded-2xl transition-all duration-1000 ease-out flex items-center px-4 ${
                         isLeader
                           ? "bg-indigo-600"
-                          : "bg-slate-400"
+                          : "bg-slate-400 dark:bg-zinc-600"
                       }`}
                       style={{ width: `${Math.max(opt.percentage, 5)}%` }} // At least 5% to show text if 0%
                     >
@@ -132,7 +133,7 @@ export default function PollResults({
                       )}
                     </div>
                   </div>
-                  <p className="text-xs font-bold text-slate-400 text-right pr-1">
+                  <p className="text-xs font-bold text-slate-400 dark:text-zinc-500 text-right pr-1">
                     {opt.count.toLocaleString()} {opt.count === 1 ? 'vote' : 'votes'}
                   </p>
                 </div>
@@ -155,38 +156,38 @@ export default function PollResults({
 
       {/* ── Demographics & Insights ── */}
       <div className="space-y-4">
-        <h3 className="text-base font-black text-slate-800 border-b border-slate-100 pb-2">Demographics</h3>
+        <h3 className="text-base font-black text-slate-800 dark:text-zinc-100 border-b border-slate-100 dark:border-zinc-800 pb-2">Demographics</h3>
         
         {/* Summary Statistics */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div className="bg-slate-50 border border-slate-100 rounded-2xl py-3 px-3">
-            <span className="text-[10px] uppercase tracking-wider font-extrabold text-slate-500">Total Respondents</span>
-            <span className="block text-xl font-black text-slate-800 mt-1">{totalVotes.toLocaleString()}</span>
+          <div className="bg-slate-50 dark:bg-zinc-800/50 border border-slate-100 dark:border-zinc-800 rounded-2xl py-3 px-3">
+            <span className="text-[10px] uppercase tracking-wider font-extrabold text-slate-500 dark:text-zinc-400">Total Respondents</span>
+            <span className="block text-xl font-black text-slate-800 dark:text-zinc-100 mt-1">{totalVotes.toLocaleString()}</span>
           </div>
-          <div className="bg-slate-50 border border-slate-100 rounded-2xl py-3 px-3">
-            <span className="text-[10px] uppercase tracking-wider font-extrabold text-slate-500">Options</span>
-            <span className="block text-xl font-black text-slate-800 mt-1">{options.length}</span>
+          <div className="bg-slate-50 dark:bg-zinc-800/50 border border-slate-100 dark:border-zinc-800 rounded-2xl py-3 px-3">
+            <span className="text-[10px] uppercase tracking-wider font-extrabold text-slate-500 dark:text-zinc-400">Options</span>
+            <span className="block text-xl font-black text-slate-800 dark:text-zinc-100 mt-1">{options.length}</span>
           </div>
-          <div className="bg-slate-50 border border-slate-100 rounded-2xl py-3 px-3">
-            <span className="text-[10px] uppercase tracking-wider font-extrabold text-slate-500">Regions</span>
-            <span className="block text-xl font-black text-slate-800 mt-1">{regionData.length}</span>
+          <div className="bg-slate-50 dark:bg-zinc-800/50 border border-slate-100 dark:border-zinc-800 rounded-2xl py-3 px-3">
+            <span className="text-[10px] uppercase tracking-wider font-extrabold text-slate-500 dark:text-zinc-400">Regions</span>
+            <span className="block text-xl font-black text-slate-800 dark:text-zinc-100 mt-1">{regionData.length}</span>
           </div>
-          <div className="bg-slate-50 border border-slate-100 rounded-2xl py-3 px-3">
-            <span className="text-[10px] uppercase tracking-wider font-extrabold text-slate-500">Last Updated</span>
-            <span className="block text-sm font-black text-slate-800 mt-2">Just now</span>
+          <div className="bg-slate-50 dark:bg-zinc-800/50 border border-slate-100 dark:border-zinc-800 rounded-2xl py-3 px-3">
+            <span className="text-[10px] uppercase tracking-wider font-extrabold text-slate-500 dark:text-zinc-400">Last Updated</span>
+            <span className="block text-sm font-black text-slate-800 dark:text-zinc-100 mt-2">Just now</span>
           </div>
         </div>
 
         {/* Tab strip */}
-        <div className="flex gap-2 border-b border-slate-200 overflow-x-auto no-scrollbar pb-px">
+        <div className="flex gap-2 border-b border-slate-200 dark:border-zinc-800 overflow-x-auto no-scrollbar pb-px">
           {TABS.map((t) => (
             <button
               key={t.key}
               onClick={() => setActiveTab(t.key)}
               className={`flex items-center gap-2 px-4 py-3 text-sm font-bold whitespace-nowrap transition-all border-b-2 ${
                 activeTab === t.key
-                  ? "border-indigo-600 text-indigo-600"
-                  : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300"
+                  ? "border-indigo-600 dark:border-indigo-500 text-indigo-600 dark:text-indigo-400"
+                  : "border-transparent text-slate-500 dark:text-zinc-500 hover:text-slate-700 dark:hover:text-zinc-300 hover:border-slate-300 dark:hover:border-zinc-700"
               }`}
             >
               {t.icon}
@@ -196,7 +197,7 @@ export default function PollResults({
         </div>
 
         {/* Tab panels */}
-        <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm min-h-[320px]">
+        <div className="bg-white dark:bg-zinc-900 border border-slate-100 dark:border-zinc-800 rounded-3xl p-6 shadow-sm min-h-[320px]">
           
           {/* ── Vote Share Pie ── */}
           {activeTab === "pie" && (
@@ -276,33 +277,17 @@ export default function PollResults({
             </div>
           )}
 
-          {/* ── Region Horizontal Bar ── */}
+          {/* ── Region Heatmap ── */}
           {activeTab === "region" && (
             <div className="space-y-4">
               <h3 className="text-sm font-black text-slate-700 flex items-center gap-2">
                 <Globe className="h-4 w-4 text-emerald-500" /> Geographic Distribution
               </h3>
-              {regionBarData.length === 0 ? (
+              {regionData.length === 0 ? (
                 <p className="text-center text-slate-400 text-sm py-10">No regional data yet.</p>
               ) : (
-                <div className="h-64 w-full text-xs">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart
-                      layout="vertical"
-                      data={regionBarData}
-                      margin={{ left: 10, right: 20, top: 0, bottom: 0 }}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" horizontal={false} />
-                      <XAxis type="number" allowDecimals={false} stroke="#94a3b8" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
-                      <YAxis type="category" dataKey="name" stroke="#64748b" tick={{ fontSize: 11, fontWeight: 600 }} width={80} axisLine={false} tickLine={false} />
-                      <Tooltip cursor={{ fill: "#f8fafc" }} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                      <Bar dataKey="value" name="Votes" radius={[0, 4, 4, 0]} barSize={24}>
-                        {regionBarData.map((_, i) => (
-                          <Cell key={i} fill={COLORS[i % COLORS.length]} />
-                        ))}
-                      </Bar>
-                    </BarChart>
-                  </ResponsiveContainer>
+                <div className="h-96 w-full relative bg-slate-50 rounded-2xl overflow-hidden border border-slate-100">
+                  <IndiaMap data={regionData} />
                 </div>
               )}
             </div>

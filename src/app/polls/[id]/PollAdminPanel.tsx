@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { deletePoll, updatePoll } from "../../actions";
 import { Trash2, Pencil, X, Save, AlertCircle, CheckCircle, Clock } from "lucide-react";
+import { toast } from "sonner";
 
 interface PollAdminPanelProps {
   pollId: string;
@@ -31,21 +32,19 @@ export default function PollAdminPanel({
   );
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
 
   const canEdit = voteCount === 0;
 
   // ── Delete ──────────────────────────────────────────────────────────────
   const handleDelete = async () => {
     setLoading(true);
-    setError(null);
     const result = await deletePoll(pollId);
     setLoading(false);
     if (result.success) {
+      toast.success("Poll deleted successfully.");
       router.push("/");
     } else {
-      setError(result.error || "Could not delete poll.");
+      toast.error(result.error || "Could not delete poll.");
       setShowDeleteConfirm(false);
     }
   };
@@ -53,8 +52,6 @@ export default function PollAdminPanel({
   // ── Edit ─────────────────────────────────────────────────────────────────
   const handleSave = async () => {
     setLoading(true);
-    setError(null);
-    setSuccess(null);
 
     const result = await updatePoll(pollId, {
       question,
@@ -64,11 +61,11 @@ export default function PollAdminPanel({
 
     setLoading(false);
     if (result.success) {
-      setSuccess(result.message ?? "Saved!");
+      toast.success(result.message ?? "Saved!");
       setIsEditing(false);
       router.refresh();
     } else {
-      setError(result.error || "Could not update poll.");
+      toast.error(result.error || "Could not update poll.");
     }
   };
 
@@ -85,8 +82,6 @@ export default function PollAdminPanel({
             onClick={() => {
               if (!canEdit) return;
               setIsEditing((v) => !v);
-              setError(null);
-              setSuccess(null);
             }}
             title={canEdit ? "Edit poll" : "Cannot edit — poll already has votes"}
             className={`inline-flex items-center space-x-1.5 text-xs font-bold px-3 py-1.5 rounded-xl border transition-all ${
@@ -128,20 +123,6 @@ export default function PollAdminPanel({
           ⚠️ This poll has <strong>{voteCount} votes</strong> — editing is locked to preserve data
           integrity. You may still delete it.
         </p>
-      )}
-
-      {/* Error / success feedback */}
-      {error && (
-        <div className="flex items-start space-x-2 bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-xl text-xs">
-          <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
-          <span>{error}</span>
-        </div>
-      )}
-      {success && (
-        <div className="flex items-center space-x-2 bg-emerald-50 border border-emerald-200 text-emerald-700 px-3 py-2 rounded-xl text-xs">
-          <CheckCircle className="h-4 w-4 shrink-0" />
-          <span>{success}</span>
-        </div>
       )}
 
       {/* Edit form */}

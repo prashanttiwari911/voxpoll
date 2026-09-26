@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { resolvePollCode } from "@/app/actions/poll";
-import { KeyRound, ArrowRight, AlertCircle, ScanLine } from "lucide-react";
+import { KeyRound, ArrowRight, AlertCircle } from "lucide-react";
 import Link from "next/link";
 
 export default function JoinPollPage() {
@@ -86,10 +86,9 @@ export default function JoinPollPage() {
         </form>
 
         <div className="pt-6 border-t border-zinc-100 text-center">
-          <p className="text-zinc-500 text-sm font-medium mb-4">or scan the QR code</p>
-          <div className="flex justify-center text-zinc-300">
-            <ScanLine className="h-12 w-12" />
-          </div>
+          <p className="text-zinc-500 text-sm font-medium">
+            📱 <strong>Have a QR code?</strong> Scan it with your phone's camera app — it opens the poll directly without needing this page.
+          </p>
         </div>
       </div>
       

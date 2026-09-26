@@ -1,7 +1,7 @@
 /**
- * src/middleware.ts
+ * src/proxy.ts
  * ──────────────────────────────────────────────────────────────────────────────
- * Next.js Edge middleware for VoTI.
+ * Next.js Edge proxy for VoTI (formerly middleware).
  *
  * Responsibilities:
  *  1. Security headers (CSP, HSTS, X-Frame-Options, etc.)
@@ -14,7 +14,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
 // ---------------------------------------------------------------------------
-// Config — which paths the middleware runs on
+// Config — which paths the proxy runs on
 // ---------------------------------------------------------------------------
 export const config = {
   matcher: [
@@ -92,9 +92,8 @@ function addSecurityHeaders(res: NextResponse): NextResponse {
 }
 
 // ---------------------------------------------------------------------------
-// Middleware handler
-// ---------------------------------------------------------------------------
-export async function middleware(req: NextRequest) {
+// Proxy handler
+export default async function proxy(req: NextRequest) {
   const { method } = req;
   const url = req.nextUrl;
   const pathname = url.pathname;

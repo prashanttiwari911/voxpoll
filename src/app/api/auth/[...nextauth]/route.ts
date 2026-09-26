@@ -1,5 +1,6 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import NextAuth, { NextAuthOptions } from "next-auth";
+import NextAuth from "next-auth/next";
+import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import EmailProvider from "next-auth/providers/email";
@@ -19,17 +20,44 @@ export const authOptions: NextAuthOptions = {
     }),
     EmailProvider({
       server: {
-        host: "localhost",
-        port: 2525,
-        auth: { user: "test", pass: "test" },
+        host: process.env.SMTP_HOST || "smtp.ethereal.email",
+        port: Number(process.env.SMTP_PORT || 587),
+        auth: {
+          user: process.env.SMTP_USER || "test",
+          pass: process.env.SMTP_PASS || "test",
+        },
       },
-      from: "noreply@voti.com",
-      // Custom send function to print the magic link to the terminal instead of sending an email
-      sendVerificationRequest({ identifier: email, url }) {
+      from: process.env.EMAIL_FROM || "noreply@voti.com",
+      generateVerificationToken() {
+        return Math.floor(100000 + Math.random() * 900000).toString();
+      },
+      async sendVerificationRequest({ identifier: email, url, token, provider }) {
+        // If SMTP isn't fully configured, we still print to console for safety in dev
         console.log("\n=======================================================");
-        console.log(`[VoTI] 🔑 MAGIC LINK FOR ${email}:`);
-        console.log(url);
+        console.log(`[VoTI] 🔑 YOUR LOGIN CODE FOR ${email} IS: ${token}`);
+        console.log(`[VoTI] Or click this link: ${url}`);
         console.log("=======================================================\n");
+
+        if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+          const nodemailer = require("nodemailer");
+          const transport = nodemailer.createTransport(provider.server);
+          await transport.sendMail({
+            to: email,
+            from: provider.from,
+            subject: `Your VoTI Login Code: ${token}`,
+            text: `Your login code is ${token}\n\nYou can also click here to login: ${url}`,
+            html: `
+              <div style="font-family: sans-serif; max-w: 500px; margin: 0 auto; padding: 20px; text-align: center; border: 1px solid #e5e7eb; border-radius: 16px;">
+                <h1 style="color: #4f46e5; margin-bottom: 8px;">VoTI</h1>
+                <p style="color: #4b5563; font-size: 16px;">Here is your one-time login code:</p>
+                <div style="font-size: 32px; font-weight: 900; letter-spacing: 4px; color: #111827; background: #f3f4f6; padding: 16px; border-radius: 12px; margin: 24px 0;">
+                  ${token}
+                </div>
+                <p style="color: #6b7280; font-size: 14px;">Or you can <a href="${url}" style="color: #4f46e5; text-decoration: none; font-weight: bold;">click here to sign in automatically</a>.</p>
+              </div>
+            `,
+          });
+        }
       },
     }),
     CredentialsProvider({

@@ -2,11 +2,12 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 // ---------------------------------------------------------------------------
@@ -79,6 +80,8 @@ model User {
   // Role: "USER" | "ADMIN" | "MODERATOR"
   role String @default("USER")
 
+  deletedAt DateTime?
+
   // Relations
   accounts      Account[]
   sessions      Session[]
@@ -128,6 +131,7 @@ model Poll {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   creatorId String
+  deletedAt DateTime?
   creator   User      @relation(fields: [creatorId], references: [id], onDelete: Cascade)
 
   options       Option[]

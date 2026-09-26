@@ -3,7 +3,8 @@
 import { useSession, signIn, signOut } from "next-auth/react";
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
-import { Vote, PlusCircle, LogOut, User, LayoutDashboard, Menu, X, Bell, Bookmark, Shield, KeyRound, Settings, ChevronDown, HelpCircle } from "lucide-react";
+import { Vote, PlusCircle, LogOut, User, LayoutDashboard, Menu, X, Bell, Bookmark, Shield, KeyRound, ChevronDown, HelpCircle } from "lucide-react";
+import { ThemeToggle } from "./ThemeToggle";
 
 export default function Navbar() {
   const { data: session } = useSession();
@@ -25,7 +26,7 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-zinc-100 shadow-sm transition-all">
+    <nav className="sticky top-0 z-50 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md border-b border-zinc-100 dark:border-zinc-800 shadow-sm transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           {/* Logo Section */}
@@ -34,7 +35,7 @@ export default function Navbar() {
               <div className="bg-gradient-to-tr from-indigo-500 to-violet-600 p-2 rounded-xl text-white shadow-md transform group-hover:scale-105 transition-transform duration-200">
                 <Vote className="h-6 w-6" />
               </div>
-              <span className="text-2xl font-black text-zinc-900 group-hover:opacity-85 transition-opacity">
+              <span className="text-2xl font-black text-zinc-900 dark:text-white group-hover:opacity-85 transition-opacity">
                 VoTI
               </span>
             </Link>
@@ -42,20 +43,22 @@ export default function Navbar() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
-            <Link href="/" className="text-zinc-600 hover:text-indigo-600 font-bold text-sm transition-colors">
+            <Link href="/" className="text-zinc-600 dark:text-zinc-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-bold text-sm transition-colors">
               Explore
             </Link>
 
             <Link href="/join"
-              className="text-zinc-600 hover:text-indigo-600 font-bold text-sm flex items-center gap-1.5 transition-colors"
+              className="text-zinc-600 dark:text-zinc-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-bold text-sm flex items-center gap-1.5 transition-colors"
             >
               <KeyRound className="h-4 w-4" />
               Join
             </Link>
 
-            <Link href="/help" className="text-zinc-600 hover:text-indigo-600 font-bold text-sm transition-colors">
+            <Link href="/help" className="text-zinc-600 dark:text-zinc-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-bold text-sm transition-colors">
               Help
             </Link>
+
+            <ThemeToggle />
 
             {session && (
               <Link
@@ -75,6 +78,7 @@ export default function Navbar() {
                   className="flex items-center space-x-2 group relative py-1 rounded-full transition-all focus:outline-none"
                   aria-expanded={dropdownOpen}
                 >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={session.user.image || `https://api.dicebear.com/7.x/fun-emoji/svg?seed=${session.user.name || "user"}`}
                     alt="Avatar"
@@ -116,7 +120,7 @@ export default function Navbar() {
                       <Link href="/notifications" onClick={() => setDropdownOpen(false)} className="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-zinc-100 transition-colors">
                         <Bell className="h-4 w-4 text-zinc-400" /> Notifications
                       </Link>
-                      {(session.user as any).role === "ADMIN" && (
+                      {session.user.role === "ADMIN" && (
                         <Link href="/admin" onClick={() => setDropdownOpen(false)} className="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-red-50 text-red-600 transition-colors">
                           <Shield className="h-4 w-4" /> Admin Panel
                         </Link>

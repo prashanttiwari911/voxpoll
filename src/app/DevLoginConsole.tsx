@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import { Lock, Sparkles, User, MapPin, Calendar, HelpCircle } from "lucide-react";
+import { Lock, Sparkles } from "lucide-react";
+import { INDIA_STATES } from "@/lib/states";
 
 const DEMO_PROFILES = [
   { name: "Aria Sharma 🎓", email: "aria@demo.com", age: "22", address: "Delhi" },
@@ -102,42 +103,65 @@ export default function DevLoginConsole() {
           <div className="flex-1 border-t border-slate-100" />
         </div>
 
-        {/* Magic Link / Email OTP Form */}
-        <form onSubmit={handleMagicLink} className="space-y-3.5">
-          <div className="bg-emerald-50/50 border border-emerald-100 rounded-2xl p-4 space-y-3">
-            <h4 className="text-xs font-black text-emerald-700 uppercase tracking-wider flex items-center">
-              <Sparkles className="h-3.5 w-3.5 mr-1" />
-              Sign in with Magic Link
-            </h4>
-            <p className="text-[10px] text-slate-500 leading-normal">
-              Enter your email and we'll send a secure one-time login link to your terminal!
-            </p>
+        {/* OTP / Magic Link Form */}
+        <div className="bg-emerald-50/50 border border-emerald-100 rounded-2xl p-4 space-y-3">
+          <h4 className="text-xs font-black text-emerald-700 uppercase tracking-wider flex items-center">
+            <Sparkles className="h-3.5 w-3.5 mr-1" />
+            Sign in with Email OTP
+          </h4>
+          <p className="text-[10px] text-slate-500 leading-normal">
+            Enter your email and we&apos;ll send a secure 6-digit code.
+          </p>
 
-            {magicSent ? (
+          {!magicSent ? (
+            <form onSubmit={handleMagicLink} className="flex gap-2 mt-2">
+              <input
+                type="email"
+                value={magicEmail}
+                onChange={(e) => setMagicEmail(e.target.value)}
+                placeholder="name@example.com"
+                required
+                className="flex-1 px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500 text-slate-800"
+              />
+              <button
+                type="submit"
+                disabled={loading || !magicEmail}
+                className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md transition-colors disabled:opacity-50"
+              >
+                Send Code
+              </button>
+            </form>
+          ) : (
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              // Construct the callback URL that NextAuth expects for email token verification
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const callbackUrl = `/api/auth/callback/email?email=${encodeURIComponent(magicEmail)}&token=${(e.target as any).token.value}&callbackUrl=/dashboard`;
+              window.location.href = callbackUrl;
+            }} className="space-y-3 mt-2">
               <div className="bg-emerald-100 text-emerald-800 p-3 rounded-xl text-xs font-bold text-center">
-                ✅ Magic Link generated! Check your VS Code Terminal!
+                ✅ Code sent to {magicEmail}
               </div>
-            ) : (
-              <div className="flex gap-2 mt-2">
+              <div className="flex gap-2">
                 <input
-                  type="email"
-                  value={magicEmail}
-                  onChange={(e) => setMagicEmail(e.target.value)}
-                  placeholder="name@example.com"
+                  type="text"
+                  name="token"
+                  placeholder="Enter 6-digit code"
                   required
-                  className="flex-1 px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500 text-slate-800"
+                  maxLength={6}
+                  pattern="[0-9]{6}"
+                  className="flex-1 px-3 py-2 text-center text-sm font-bold tracking-[0.3em] rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500 text-slate-800"
                 />
                 <button
                   type="submit"
-                  disabled={loading || !magicEmail}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md transition-colors disabled:opacity-50"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md transition-colors"
                 >
-                  Send
+                  Verify
                 </button>
               </div>
-            )}
-          </div>
-        </form>
+            </form>
+          )}
+        </div>
 
         {/* Divider */}
         <div className="flex items-center my-4 text-xs font-bold text-slate-400 uppercase tracking-widest">
@@ -181,13 +205,18 @@ export default function DevLoginConsole() {
                 placeholder="Age"
                 className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-1 focus:ring-indigo-500 text-slate-800"
               />
-              <input
-                type="text"
+              <select
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
-                placeholder="City/Region"
                 className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-1 focus:ring-indigo-500 text-slate-800"
-              />
+              >
+                <option value="">Select State/Region</option>
+                {INDIA_STATES.map((state) => (
+                  <option key={state} value={state}>
+                    {state}
+                  </option>
+                ))}
+              </select>
               <select
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}

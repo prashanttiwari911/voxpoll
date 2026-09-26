@@ -1,8 +1,8 @@
 # 🗳️ VoTI — Vote & Poll of India
 
-VoTI is a modern, joyful, and highly interactive online polling platform built with Next.js 15. Designed to make data collection and community engagement seamless, VoTI offers robust poll creation, real-time analytics, and a secure administration panel. 
+VoTI is a modern, interactive online polling platform built with **Next.js 16.2.6** (App Router). Designed to make data collection and community engagement seamless, VoTI offers robust poll creation, results analytics, and a secure administration panel.
 
-This project was rebuilt from the ground up to serve as a production-ready, scalable application suitable for MCA project submission.
+This project was built as a production-oriented MCA submission demonstrating full-stack development with Next.js, Prisma, NextAuth, and a Python sentiment microservice.
 
 ---
 
@@ -11,18 +11,19 @@ This project was rebuilt from the ground up to serve as a production-ready, scal
 ### 📊 Advanced Analytics
 *   **Live Standings:** Animated progress bars with automatic "Leader" highlighting.
 *   **Vote Share:** Interactive donut pie charts.
-*   **Demographics:** Real-time grouped bar charts for age brackets and regional distribution.
+*   **Demographics:** Grouped bar charts for age brackets and regional distribution, computed from aggregate vote data.
 *   **Trend Analysis:** Dual-line charts showing daily vote trends and cumulative totals.
+*   **Results update** after each vote submission via server-side refresh (not WebSocket).
 
 ### 🛠️ Robust Poll Creation
-*   **Multi-Choice Support:** Allow users to select multiple options with a customizable `maxChoices` limit.
+*   **Multi-Choice Support:** Fully implemented end-to-end — allow users to select multiple options with a configurable `maxChoices` limit. UI shows checkboxes and a live selection counter.
 *   **Rich Media & Metadata:** Support for cover images and up to 5 custom `#tags`.
 *   **Scheduling:** Set a future `scheduledAt` date or manually save a poll as a `DRAFT`.
 *   **Auto-Closing:** Set a `closesAt` date to automatically lock the poll from further voting.
 
 ### 💬 Community Engagement
 *   **Nested Comments:** Participate in threaded discussions with support for up to one level of nested replies.
-*   **AI Sentiment Analysis:** (Requires Python Microservice) Comments are analyzed in real-time by an AI microservice to determine if they are Positive 😊, Negative 😔, or Neutral 😐.
+*   **Sentiment Analysis:** (Requires Python Microservice) Comments are analyzed using VADER — a rule-based lexicon sentiment analyser — via a FastAPI microservice to classify them as Positive 😊, Negative 😔, or Neutral 😐.
 *   **Bookmarks:** Save your favorite polls to a dedicated dashboard.
 *   **Notifications:** Get alerted when someone replies to your comment or likes your post.
 
@@ -37,9 +38,9 @@ This project was rebuilt from the ground up to serve as a production-ready, scal
 ## 💻 Tech Stack
 
 ### Frontend & Core
-*   **Framework:** Next.js 15 (App Router)
+*   **Framework:** Next.js 16.2.6 (App Router)
 *   **Language:** TypeScript
-*   **Styling:** Tailwind CSS + Shadcn UI patterns
+*   **Styling:** Tailwind CSS
 *   **Charts:** Recharts
 *   **Icons:** Lucide React
 
@@ -51,7 +52,7 @@ This project was rebuilt from the ground up to serve as a production-ready, scal
 
 ### Microservice (Python)
 *   **Framework:** FastAPI
-*   **Analysis:** VADER Sentiment Analysis (`vaderSentiment`)
+*   **Analysis:** VADER rule-based sentiment analysis (`vaderSentiment` library)
 
 ---
 

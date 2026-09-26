@@ -1,15 +1,18 @@
 import { PrismaClient } from "@prisma/client";
-import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
-import path from "path";
-// Validate required environment variables on startup
+import { Pool } from "pg";
+import { PrismaPg } from "@prisma/adapter-pg";
 import "@/lib/env";
 
+const connectionString = process.env.DATABASE_URL;
 
-// Resolve the absolute path of the SQLite dev.db file
-const dbPath = path.resolve(process.cwd(), "dev.db");
+// Configure pool to handle serverless cold starts gracefully
+const pool = new Pool({ 
+  connectionString,
+  connectionTimeoutMillis: 10000,
+  ssl: { rejectUnauthorized: false }
+});
 
-// In Prisma 7, PrismaBetterSqlite3 takes configuration options directly
-const adapter = new PrismaBetterSqlite3({ url: dbPath });
+const adapter = new PrismaPg(pool);
 
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 

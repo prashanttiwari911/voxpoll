@@ -40,8 +40,21 @@ export default async function PollPage({ params }: PageProps) {
     where: { id },
     include: {
       options: { include: { votes: true } },
-      votes: { include: { user: true } },
-      creator: true,
+      // Only select demographic fields from users — not full user objects
+votes: {
+  select: {
+    id: true,
+    userId: true,
+    optionId: true,
+    createdAt: true,
+    user: {
+      select: {
+        age: true,
+        address: true
+      }
+    }
+  }
+},      creator: true,
       comments: {
         include: { user: { select: { id: true, name: true, image: true } } },
         orderBy: { createdAt: "asc" },
@@ -49,7 +62,7 @@ export default async function PollPage({ params }: PageProps) {
     },
   });
 
-  if (!poll) {
+  if (!poll || (poll as any).deletedAt) {
     return (
       <div className="max-w-md mx-auto my-16 px-4 py-8 bg-white border border-indigo-50 rounded-3xl shadow-xl text-center">
         <h2 className="text-2xl font-black text-slate-800">Poll Not Found 🕵️</h2>
@@ -86,6 +99,11 @@ export default async function PollPage({ params }: PageProps) {
   const closingInfo = getClosingLabel(poll.closesAt);
   const isClosed = closingInfo?.isClosed ?? false;
 
+  // Lazy Evaluation DB sync for expired polls
+  if (isClosed && poll.status === "PUBLISHED") {
+    db.poll.update({ where: { id: poll.id }, data: { status: "CLOSED" } }).catch(console.error);
+  }
+
   // 5. Option statistics
   const totalVotes = poll.votes.length;
   const optionsResults = poll.options.map((opt) => {
@@ -118,8 +136,7 @@ export default async function PollPage({ params }: PageProps) {
   poll.votes.forEach((vote) => {
     const rawAddress = vote.user?.address;
     if (rawAddress) {
-      const region = rawAddress.trim().toLowerCase();
-      const formatted = region.charAt(0).toUpperCase() + region.slice(1);
+      const formatted = rawAddress.trim();
       regionCounts[formatted] = (regionCounts[formatted] || 0) + 1;
     }
   });
@@ -147,19 +164,19 @@ export default async function PollPage({ params }: PageProps) {
     <div className="max-w-4xl mx-auto my-12 px-4 sm:px-6">
       <Link
         href="/"
-        className="inline-flex items-center space-x-1.5 text-sm font-medium text-slate-400 hover:text-indigo-600 mb-6 transition-colors"
+        className="inline-flex items-center space-x-1.5 text-sm font-medium text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 mb-6 transition-colors"
       >
         <ArrowLeft className="h-4 w-4" />
         <span>Back to Polls</span>
       </Link>
 
-      <div className="bg-white border border-indigo-50 rounded-3xl shadow-xl overflow-hidden">
+      <div className="bg-white dark:bg-zinc-900 border border-indigo-50 dark:border-zinc-800 rounded-3xl shadow-xl overflow-hidden">
         {/* Category Header */}
-        <div className="bg-gradient-to-r from-indigo-500 via-indigo-600 to-violet-600 text-white relative">
+        <div className="bg-linear-to-r from-indigo-500 via-indigo-600 to-violet-600 text-white relative">
           {poll.imageUrl && (
             <div className="w-full h-48 sm:h-64 relative">
               <img src={poll.imageUrl} alt={poll.question} className="w-full h-full object-cover opacity-80" />
-              <div className="absolute inset-0 bg-gradient-to-t from-indigo-600 to-transparent"></div>
+              <div className="absolute inset-0 bg-linear-to-t from-indigo-600 to-transparent"></div>
             </div>
           )}
           <div className={`p-6 sm:px-8 relative z-10 ${poll.imageUrl ? '-mt-16' : ''}`}>
@@ -189,7 +206,7 @@ export default async function PollPage({ params }: PageProps) {
         </div>
 
         {/* Info badges */}
-        <div className="px-6 py-4 bg-slate-50 border-b border-slate-100 flex flex-wrap gap-4 text-xs font-semibold text-slate-500 sm:px-8">
+        <div className="px-6 py-4 bg-slate-50 dark:bg-zinc-800/50 border-b border-slate-100 dark:border-zinc-800 flex flex-wrap gap-4 text-xs font-semibold text-slate-500 dark:text-zinc-400 sm:px-8">
           <div className="flex items-center space-x-1">
             <User className="h-3.5 w-3.5 text-indigo-500" />
             <span>Asked by {poll.creator.name || "Anonymous"}</span>
@@ -204,7 +221,7 @@ export default async function PollPage({ params }: PageProps) {
               <span>{totalVotes} {totalVotes === 1 ? "response" : "responses"}</span>
             </div>
             {/* Share button (Modal with QR & ShortCode) */}
-            <SharePollModal pollId={poll.id} shortCode={poll.shortCode} />
+            <SharePollModal pollId={poll.id} shortCode={poll.shortCode} pollTitle={poll.question} />
             
             {/* Presenter Mode and CSV download — creator only */}
             {isCreator && (
@@ -285,8 +302,19 @@ export default async function PollPage({ params }: PageProps) {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
               <div className="lg:col-span-5 space-y-4">
                 <h2 className="text-lg font-black text-slate-800">Cast Your Ballot</h2>
-                <p className="text-xs text-slate-400">Make your choice. Your vote is anonymous and secure.</p>
-                <PollVotingForm pollId={poll.id} options={poll.options} isClosed={isClosed} />
+                {poll.isMultipleChoice && (
+                  <p className="text-xs font-bold text-indigo-600 bg-indigo-50 border border-indigo-100 px-3 py-1.5 rounded-lg">
+                    ✦ Multiple choice — select up to {poll.maxChoices} option{poll.maxChoices > 1 ? "s" : ""}
+                  </p>
+                )}
+                <p className="text-xs text-slate-400">Results are shown in aggregate. Individual votes are never displayed publicly.</p>
+                <PollVotingForm
+                  pollId={poll.id}
+                  options={poll.options}
+                  isClosed={isClosed}
+                  isMultipleChoice={poll.isMultipleChoice}
+                  maxChoices={poll.maxChoices}
+                />
               </div>
               <div className="hidden lg:block lg:col-span-1 border-l border-slate-100" />
               <div className="lg:col-span-6 space-y-4">

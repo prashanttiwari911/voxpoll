@@ -239,8 +239,8 @@ export async function deletePoll(pollId: string) {
       return { success: false, error: "You are not allowed to delete this poll." };
     }
 
-    await db.poll.delete({ where: { id: pollId } });
-    await writeAuditLog({ userId: user.id, action: "DELETE_POLL", entity: "Poll", entityId: pollId });
+    await db.poll.update({ where: { id: pollId }, data: { deletedAt: new Date() } });
+    await writeAuditLog({ userId: user.id, action: "SOFT_DELETE_POLL", entity: "Poll", entityId: pollId });
     revalidatePath("/");
     revalidatePath("/dashboard");
     return { success: true };

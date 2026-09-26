@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import { Providers } from "@/components/Providers";
 import SessionTimeout from "@/components/SessionTimeout";
+import { Toaster } from "sonner";
 
 const fontJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -21,9 +22,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${fontJakarta.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col bg-slate-50 text-slate-800 font-sans">
+    <html lang="en" className={`${fontJakarta.variable} h-full antialiased`} suppressHydrationWarning>
+      <body className="min-h-full flex flex-col bg-slate-50 dark:bg-zinc-950 text-slate-800 dark:text-slate-100 font-sans transition-colors duration-300">
         <Providers>
+          <Toaster position="bottom-right" richColors closeButton />
           <div className="flex flex-col min-h-screen">
             <Navbar />
             <main className="flex-1 flex flex-col">{children}</main>

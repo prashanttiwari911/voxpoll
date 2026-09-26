@@ -48,10 +48,10 @@ export async function adminDeletePoll(pollId: string) {
       return { success: false, error: "Admin access required." };
     }
 
-    await db.poll.delete({ where: { id: pollId } });
+    await db.poll.update({ where: { id: pollId }, data: { deletedAt: new Date() } });
     await writeAuditLog({
       userId: actor.id,
-      action: "ADMIN_DELETE_POLL",
+      action: "ADMIN_SOFT_DELETE_POLL",
       entity: "Poll",
       entityId: pollId,
     });

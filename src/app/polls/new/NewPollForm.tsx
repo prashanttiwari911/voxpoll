@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createPoll } from "../../actions";
 import {
-  AlertCircle, HelpCircle, Plus, Trash2, Sparkles, Clock,
-  CalendarClock, ListChecks, Image, Tag, X, CheckSquare,
-  BarChart3,
+  AlertCircle, Plus, Trash2, Sparkles, Clock,
+  ListChecks, CheckSquare, BarChart3,
 } from "lucide-react";
+import { toast } from "sonner";
 
 const CATEGORIES = [
   { value: "EDUCATION",  label: "Education 📚" },
@@ -28,15 +28,15 @@ export default function NewPollForm() {
   const [category, setCategory]       = useState("EDUCATION");
   const [options, setOptions]         = useState(["", ""]);
   const [closesAt, setClosesAt]       = useState("");
+  const [minDate, setMinDate]         = useState("");
+
+  useEffect(() => {
+    setMinDate(new Date(Date.now() + 60_000).toISOString().slice(0, 16));
+  }, []);
 
   // New fields
   const [isMultiple, setIsMultiple]   = useState(false);
-  const [maxChoices, setMaxChoices]   = useState(2);
-  const [imageUrl, setImageUrl]       = useState("");
-  const [scheduledAt, setScheduledAt] = useState("");
   const [saveAsDraft, setSaveAsDraft] = useState(false);
-  const [tagInput, setTagInput]       = useState("");
-  const [tags, setTags]               = useState<string[]>([]);
 
   const [loading, setLoading]         = useState(false);
   const [error, setError]             = useState<string | null>(null);
@@ -47,29 +47,18 @@ export default function NewPollForm() {
   const changeOption = (i: number, val: string) => {
     const u = [...options]; u[i] = val; setOptions(u);
   };
-
-  // ── Tag helpers ──
-  const addTag = () => {
-    const t = tagInput.trim().toLowerCase().replace(/[^a-z0-9\-]/g, "-");
-    if (t && tags.length < 5 && !tags.includes(t)) {
-      setTags([...tags, t]);
-    }
-    setTagInput("");
-  };
-  const removeTag = (t: string) => setTags(tags.filter((x) => x !== t));
-
   // ── Submit ──
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (question.trim().length < 5) {
-      setError("Question must be at least 5 characters."); return;
+      toast.error("Question must be at least 5 characters."); return;
     }
     const filled = options.map((o) => o.trim()).filter(Boolean);
     if (filled.length < 2) {
-      setError("Please provide at least 2 voting choices."); return;
+      toast.error("Please provide at least 2 voting choices."); return;
     }
 
-    setLoading(true); setError(null);
+    setLoading(true);
 
     const result = await createPoll(null, {
       question,
@@ -87,9 +76,10 @@ export default function NewPollForm() {
 
     setLoading(false);
     if (result.success && result.pollId) {
+      toast.success("Poll created successfully!");
       router.push(`/polls/${result.pollId}`);
     } else {
-      setError(result.error || "An error occurred while creating the poll.");
+      toast.error(result.error || "An error occurred while creating the poll.");
     }
   };
 
@@ -101,13 +91,6 @@ export default function NewPollForm() {
       {/* ── Left Column: Form Settings ── */}
       <div className="lg:col-span-7 space-y-7">
         <form onSubmit={handleSubmit} className="space-y-7">
-          {error && (
-            <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl">
-              <AlertCircle className="h-5 w-5 shrink-0" />
-              <span className="text-sm font-medium">{error}</span>
-            </div>
-          )}
-
           {/* Question */}
           <div>
             <label className="block text-sm font-bold text-zinc-700 mb-2 flex items-center gap-1.5">
@@ -200,7 +183,7 @@ export default function NewPollForm() {
                 type="datetime-local"
                 value={closesAt}
                 onChange={(e) => setClosesAt(e.target.value)}
-                min={new Date(Date.now() + 60_000).toISOString().slice(0, 16)}
+                min={minDate}
                 className="w-full px-4 py-2.5 rounded-xl border-2 border-zinc-200 focus:outline-none focus:border-indigo-500 transition-all font-bold text-zinc-800"
               />
             </div>
@@ -235,7 +218,7 @@ export default function NewPollForm() {
                   </div>
                   <div>
                     <span className="block text-sm font-bold text-zinc-800">Save as Draft</span>
-                    <span className="block text-xs text-zinc-500 font-medium mt-0.5">Keep poll private until you're ready to publish</span>
+                    <span className="block text-xs text-zinc-500 font-medium mt-0.5">Keep poll private until you&apos;re ready to publish</span>
                   </div>
                 </div>
                 <div className={`relative inline-flex h-7 w-12 shrink-0 rounded-full transition-colors duration-200 focus:outline-none ${saveAsDraft ? "bg-amber-500" : "bg-zinc-300"}`}>

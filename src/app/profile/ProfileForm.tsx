@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { updateProfile } from "../actions";
-import { User, MapPin, Calendar, CheckCircle, AlertCircle, Sparkles } from "lucide-react";
+import { User, MapPin, Calendar, Sparkles } from "lucide-react";
+import { INDIA_STATES } from "@/lib/states";
+import { toast } from "sonner";
 
 interface ProfileFormProps {
   initialData: {
@@ -21,14 +23,10 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
   const [address, setAddress] = useState(initialData.address || "");
   
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
-    setSuccess(null);
 
     const formData = new FormData();
     formData.append("name", name);
@@ -39,32 +37,15 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
 
     setLoading(false);
     if (result.success) {
-      setSuccess(result.message || "Profile updated!");
+      toast.success(result.message || "Profile updated!");
       router.refresh();
-      // Clear success message after 3 seconds
-      setTimeout(() => setSuccess(null), 4000);
     } else {
-      setError(result.error || "Something went wrong.");
+      toast.error(result.error || "Something went wrong.");
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Alert Boxes */}
-      {error && (
-        <div className="flex items-center space-x-2 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl animate-shake">
-          <AlertCircle className="h-5 w-5 shrink-0" />
-          <span className="text-sm font-medium">{error}</span>
-        </div>
-      )}
-
-      {success && (
-        <div className="flex items-center space-x-2 bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-xl">
-          <CheckCircle className="h-5 w-5 shrink-0" />
-          <span className="text-sm font-medium">{success}</span>
-        </div>
-      )}
-
       {/* Name Input */}
       <div>
         <label className="block text-sm font-semibold text-slate-700 mb-2 flex items-center">
@@ -118,17 +99,22 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
         <div>
           <label className="block text-sm font-semibold text-slate-700 mb-2 flex items-center">
             <MapPin className="h-4 w-4 mr-1.5 text-amber-500" />
-            Your City / Region
+            Your State / UT
           </label>
-          <input
-            type="text"
+          <select
             value={address}
             onChange={(e) => setAddress(e.target.value)}
-            placeholder="e.g. Delhi, Mumbai, Kerala"
             required
             className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-          />
-          <p className="text-xs text-slate-400 mt-1">Required for regional demographics charts.</p>
+          >
+            <option value="" disabled>Select State/UT</option>
+            {INDIA_STATES.map((state) => (
+              <option key={state} value={state}>
+                {state}
+              </option>
+            ))}
+          </select>
+          <p className="text-xs text-slate-400 mt-1">Required for India Map demographics.</p>
         </div>
       </div>
 

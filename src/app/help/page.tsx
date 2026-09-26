@@ -307,7 +307,7 @@ export default function HelpPage() {
   return (
     <div className="flex-1 flex flex-col bg-white">
       {/* Hero Banner */}
-      <section className="bg-gradient-to-br from-zinc-900 to-indigo-950 text-white py-20 px-4 text-center relative overflow-hidden">
+      <section className="bg-linear-to-br from-zinc-900 to-indigo-950 text-white py-20 px-4 text-center relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-10 left-1/4 w-64 h-64 rounded-full bg-indigo-500 blur-3xl" />
           <div className="absolute bottom-0 right-1/4 w-80 h-80 rounded-full bg-violet-500 blur-3xl" />

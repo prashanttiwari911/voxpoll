@@ -10,8 +10,8 @@ const IDLE_TIMEOUT_MS = 15 * 60 * 1000;
 const WARNING_BEFORE_MS = 60 * 1000;
 
 export default function SessionTimeout() {
-  const { data: session, status } = useSession();
-  const [lastActive, setLastActive] = useState<number>(Date.now());
+  const { status } = useSession();
+  const [lastActive, setLastActive] = useState<number>(() => Date.now());
   const [showWarning, setShowWarning] = useState(false);
 
   const resetTimer = useCallback(() => {
@@ -81,7 +81,7 @@ export default function SessionTimeout() {
             onClick={resetTimer}
             className="flex-1 px-4 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-700 transition-colors shadow-md shadow-indigo-200"
           >
-            I'm still here
+            I&apos;m still here
           </button>
         </div>
       </div>
