@@ -76,12 +76,12 @@ export default async function Home({
                 <span>Create a Poll</span>
                 <ArrowRight className="h-5 w-5 ml-1" />
               </Link>
-              <Link
-                href="/join"
-                className="w-full sm:w-auto bg-white/50 dark:bg-zinc-900/50 backdrop-blur-md border border-zinc-200 dark:border-zinc-700 hover:border-indigo-300 dark:hover:border-indigo-600 text-zinc-900 dark:text-white font-bold px-8 py-4 rounded-2xl flex items-center justify-center space-x-2 text-lg transition-all active:scale-95 hover:-translate-y-1 hover:shadow-lg"
-              >
-                <span>Join a Poll</span>
-              </Link>
+              <a
+                  href="#explore"
+                  className="w-full sm:w-auto bg-white/50 dark:bg-zinc-900/50 backdrop-blur-md border border-zinc-200 dark:border-zinc-700 hover:border-indigo-300 dark:hover:border-indigo-600 text-zinc-900 dark:text-white font-bold px-8 py-4 rounded-2xl flex items-center justify-center space-x-2 text-lg transition-all active:scale-95 hover:-translate-y-1 hover:shadow-lg"
+                >
+                  <span>Explore Polls</span>
+                </a>
             </div>
           </div>
           
@@ -192,7 +192,9 @@ export default async function Home({
           </div>
         </div>
         
+        <div id="explore" className="scroll-mt-24">
         <PollsList initialPolls={pollsWithStatus} />
+      </div>
         
         {/* Pagination Controls */}
         <div className="mt-8 flex items-center justify-center gap-4">
