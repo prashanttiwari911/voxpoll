@@ -3,6 +3,12 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { db } from "@/lib/db";
 import nodemailer from "nodemailer";
+import { z } from "zod";
+
+const shareSchema = z.object({
+  emails: z.array(z.string().email()).min(1).max(20),
+  message: z.string().max(500).optional(),
+});
 
 interface Params {
   params: Promise<{ id: string }>;
@@ -11,13 +17,22 @@ interface Params {
 export async function POST(req: Request, { params }: Params) {
   try {
     const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { id } = await params;
     const body = await req.json();
-    const { emails, message } = body;
-
-    if (!Array.isArray(emails) || emails.length === 0) {
-      return NextResponse.json({ error: "Invalid emails array" }, { status: 400 });
+    
+    const parsed = shareSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Invalid sharing details." },
+        { status: 400 }
+      );
     }
+
+    const { emails, message } = parsed.data;
 
     const poll = await db.poll.findUnique({
       where: { id },
@@ -25,6 +40,11 @@ export async function POST(req: Request, { params }: Params) {
 
     if (!poll) {
       return NextResponse.json({ error: "Poll not found" }, { status: 404 });
+    }
+
+    // Only allow creator or admin to share
+    if (poll.creatorId !== session.user.id && session.user.role !== "ADMIN") {
+      return NextResponse.json({ error: "Forbidden: You cannot share this poll" }, { status: 403 });
     }
 
     // Grab configured SMTP settings
@@ -46,7 +66,7 @@ export async function POST(req: Request, { params }: Params) {
       auth: { user, pass },
     });
 
-    const senderName = session?.user?.name || "A VoTI user";
+    const senderName = session.user.name || "A VoTI user";
     const appUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
     const pollLink = `${appUrl}/polls/${poll.id}`;
 

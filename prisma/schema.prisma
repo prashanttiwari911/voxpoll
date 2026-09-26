@@ -14,8 +14,8 @@ generator client {
 // Enums
 // ---------------------------------------------------------------------------
 
-// SQLite does not support native enums — store as String with validation in app
-// Possible values documented via comments below.
+// We use Strings for enum fields to keep migrations simple during prototyping.
+// Possible values are documented via comments below.
 
 // Role: "USER" | "ADMIN" | "MODERATOR"
 // PollStatus: "DRAFT" | "PUBLISHED" | "CLOSED"

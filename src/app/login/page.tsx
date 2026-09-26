@@ -186,8 +186,8 @@ export default function LoginPage() {
                   </select>
                 </div>
                 <div className="col-span-2">
-                  <label className="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-1.5">State / Address</label>
-                  <input type="text" value={profile.address} onChange={e => setProfile({...profile, address: e.target.value})} placeholder="e.g. Maharashtra, India" className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none" required />
+                  <label className="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-1.5">State / UT</label>
+                  <input type="text" value={profile.address} onChange={e => setProfile({...profile, address: e.target.value})} placeholder="e.g. Maharashtra" className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none" required />
                 </div>
                 <div className="col-span-2">
                   <label className="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-1.5">Occupation</label>

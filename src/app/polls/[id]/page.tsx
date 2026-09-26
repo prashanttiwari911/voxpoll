@@ -11,6 +11,7 @@ import CommentsSection from "./CommentsSection";
 import type { CommentData } from "./CommentsSection";
 import Link from "next/link";
 import { ArrowLeft, Calendar, User, MessageCircle, BarChart, Clock, Download } from "lucide-react";
+import { calculatePollStats } from "@/lib/poll-stats";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -104,60 +105,8 @@ votes: {
     db.poll.update({ where: { id: poll.id }, data: { status: "CLOSED" } }).catch(console.error);
   }
 
-  // 5. Option statistics
-  const totalVotes = poll.votes.length;
-  const optionsResults = poll.options.map((opt) => {
-    const count = opt.votes.length;
-    const percentage = totalVotes > 0 ? Math.round((count / totalVotes) * 100) : 0;
-    return { id: opt.id, text: opt.text, count, percentage };
-  });
-
-  // 6. Age demographics
-  const ageGroups = [
-    { name: "Under 25", min: 0, max: 24 },
-    { name: "25 - 45", min: 25, max: 45 },
-    { name: "45+", min: 46, max: 120 },
-  ];
-  const ageData = ageGroups.map((group) => {
-    const dataPoint: { name: string; [key: string]: string | number } = { name: group.name };
-    poll.options.forEach((opt) => { dataPoint[opt.text] = 0; });
-    poll.votes.forEach((vote) => {
-      const voterAge = vote.user?.age;
-      const optionText = poll.options.find((o) => o.id === vote.optionId)?.text;
-      if (voterAge && optionText && voterAge >= group.min && voterAge <= group.max) {
-        dataPoint[optionText] = (dataPoint[optionText] as number) + 1;
-      }
-    });
-    return dataPoint;
-  });
-
-  // 7. Region demographics
-  const regionCounts: { [r: string]: number } = {};
-  poll.votes.forEach((vote) => {
-    const rawAddress = vote.user?.address;
-    if (rawAddress) {
-      const formatted = rawAddress.trim();
-      regionCounts[formatted] = (regionCounts[formatted] || 0) + 1;
-    }
-  });
-  const regionData = Object.entries(regionCounts)
-    .map(([name, value]) => ({ name, value }))
-    .sort((a, b) => b.value - a.value);
-
-  // 8. Vote trend — daily vote counts + cumulative
-  const dailyCounts: { [day: string]: number } = {};
-  poll.votes.forEach((vote) => {
-    const day = new Date(vote.createdAt).toLocaleDateString("en-IN", {
-      day: "numeric",
-      month: "short",
-    });
-    dailyCounts[day] = (dailyCounts[day] || 0) + 1;
-  });
-  let cumulative = 0;
-  const trendData: TrendDataPoint[] = Object.entries(dailyCounts).map(([date, votes]) => {
-    cumulative += votes;
-    return { date, votes, cumulative };
-  });
+  // 5-8. Compute all poll statistics (demographics, charts, unique voters)
+  const { totalVoters, totalVotes, optionsResults, ageData, regionData, trendData } = calculatePollStats(poll.votes, poll.options);
 
   return (
     <div className="max-w-4xl mx-auto my-12 px-4 sm:px-6">
@@ -217,7 +166,7 @@ votes: {
           <div className="flex items-center space-x-1 ml-auto gap-3">
             <div className="flex items-center space-x-1">
               <MessageCircle className="h-3.5 w-3.5 text-emerald-500" />
-              <span>{totalVotes} {totalVotes === 1 ? "response" : "responses"}</span>
+              <span>{totalVoters} {totalVoters === 1 ? "voter" : "voters"}</span>
             </div>
             {/* Share button (Modal with QR & ShortCode) */}
             <SharePollModal pollId={poll.id} shortCode={poll.shortCode} pollTitle={poll.question} />

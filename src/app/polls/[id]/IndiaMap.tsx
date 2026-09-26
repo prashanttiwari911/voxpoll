@@ -63,7 +63,7 @@ export default function IndiaMap({ data }: IndiaMapProps) {
         }}
         width={800}
         height={600}
-        style={{ /* @ts-ignore */ width: "100%", height: "100%" }}
+        style={{ width: "100%", height: "100%" }}
       >
         <Geographies geography={geoUrl}>
           {({ geographies }) =>
@@ -79,19 +79,14 @@ export default function IndiaMap({ data }: IndiaMapProps) {
                   fill={value > 0 ? colorScale(value) : "#f1f5f9"}
                   stroke="#ffffff"
                   strokeWidth={0.7}
-                  style={{ /* @ts-ignore */
-                    default: {
-                      outline: "none",
-                    },
-                    hover: {
-                      fill: "#10b981",
-                      outline: "none",
-                      cursor: "pointer",
-                    },
-                    pressed: {
-                      outline: "none",
-                    },
-                  }}
+                  style={
+                    // @types/react-simple-maps is missing the correct structure for interactive states
+                    {
+                      default: { outline: "none" },
+                      hover: { fill: "#10b981", outline: "none", cursor: "pointer" },
+                      pressed: { outline: "none" },
+                    } as React.CSSProperties
+                  }
                 >
                   <title>
                     {stateName}: {value} {value === 1 ? "vote" : "votes"}

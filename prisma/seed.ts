@@ -39,7 +39,7 @@ async function main() {
         creatorId: systemUser.id,
         question: "What is your primary programming language for 2026?",
         description: "Let's see what the community is focusing on this year.",
-        category: "Technology",
+        category: "TECHNOLOGY",
         status: "PUBLISHED",
         isMultipleChoice: false,
         imageUrl: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80&w=800",
@@ -58,7 +58,7 @@ async function main() {
       data: {
         creatorId: systemUser.id,
         question: "How many days a week do you prefer working from the office?",
-        category: "Work & Life",
+        category: "OTHER",
         status: "PUBLISHED",
         isMultipleChoice: true,
         maxChoices: 2,

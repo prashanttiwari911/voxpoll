@@ -15,7 +15,13 @@ test('homepage loads and displays hero text', async ({ page }) => {
 test('navigation contains essential links', async ({ page }) => {
   await page.goto('/');
 
-  const nav = page.locator('nav');
-  await expect(nav.getByRole('link', { name: 'Explore' }).first()).toBeVisible();
-  await expect(nav.getByRole('link', { name: 'Join' }).first()).toBeVisible();
+  const nav = page.locator('nav').first();
+  
+  await expect(
+    nav.getByRole('link', { name: 'Explore', exact: true }).first()
+  ).toBeVisible();
+
+  await expect(
+    nav.locator('a[href="/join"]').first()
+  ).toBeVisible();
 });
