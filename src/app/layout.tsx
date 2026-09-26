@@ -37,10 +37,12 @@ export default function RootLayout({
                 {/* Brand */}
                 <div className="col-span-2 md:col-span-1 space-y-4">
                   <div className="flex items-center gap-2">
-                    <div className="bg-gradient-to-tr from-indigo-500 to-violet-600 p-2 rounded-xl text-white shadow-md">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m9 12 2 2 4-4"/><path d="M5 7c0-1.1.9-2 2-2h10a2 2 0 0 1 2 2v12H5V7Z"/><path d="M22 19H2"/></svg>
-                    </div>
-                    <span className="text-xl font-black text-white">VoTI</span>
+                    <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-zinc-800 text-white shadow-md">
+                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                        </svg>
+                      </div>
+                      <span className="text-xl font-black text-white tracking-tight">VoTI</span>
                   </div>
                   <p className="text-sm leading-relaxed font-medium">Cast your vote. Make your voice heard. Real-time polls for everyone.</p>
                   <p className="text-xs font-bold text-zinc-600">© {new Date().getFullYear()} VoTI. All rights reserved.</p>

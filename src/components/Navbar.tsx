@@ -31,11 +31,13 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-16 w-full gap-4 md:gap-8">
           {/* Left Side: Logo & Main Links */}
           <div className="flex items-center gap-12">
-            <Link href="/" className="flex items-center space-x-2 group">
-              <div className="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-2 rounded-2xl text-white shadow-lg shadow-indigo-500/30 transform group-hover:scale-105 group-hover:rotate-3 transition-all duration-300">
-                <Vote className="h-6 w-6" />
+            <Link href="/" className="flex items-center space-x-2.5 group">
+              <div className="flex items-center justify-center h-9 w-9 rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-md transform group-hover:scale-105 group-hover:rotate-[-5deg] transition-all duration-300">
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                </svg>
               </div>
-              <span className="text-2xl font-black text-zinc-900 dark:text-white group-hover:opacity-85 transition-opacity">
+              <span className="text-2xl font-black tracking-tight text-zinc-900 dark:text-white group-hover:opacity-85 transition-opacity">
                 VoTI
               </span>
             </Link>
