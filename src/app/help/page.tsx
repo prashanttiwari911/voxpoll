@@ -303,6 +303,7 @@ const TABS: { key: TabKey; label: string; icon: React.ElementType }[] = [
 
 export default function HelpPage() {
   const [activeTab, setActiveTab] = useState<TabKey>("help");
+  const [expandedCard, setExpandedCard] = useState<string | null>(null);
 
   return (
     <div className="flex-1 flex flex-col bg-white">
@@ -351,18 +352,51 @@ export default function HelpPage() {
         {activeTab === "help" && (
           <div className="space-y-12">
             {/* Quick Links */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-12">
               {[
-                { icon: Zap,      title: "Quick Start",   desc: "Get up and running in under 2 minutes.",            color: "bg-amber-50 border-amber-100 text-amber-600" },
-                { icon: BookOpen, title: "User Guide",    desc: "Full documentation on every VoTI feature.",         color: "bg-indigo-50 border-indigo-100 text-indigo-600" },
-                { icon: Shield,   title: "Privacy & Data", desc: "How we collect and protect your information.",     color: "bg-emerald-50 border-emerald-100 text-emerald-600" },
+                { 
+                  icon: Zap,      
+                  title: "Quick Start",   
+                  desc: "Get up and running in under 2 minutes.",            
+                  color: "bg-amber-50 border-amber-100 text-amber-600",
+                  content: "To get started, simply click 'Sign In' at the top right of the page. You can create a free account or use our 1-click Demo Login. Once signed in, click 'Create Poll' to ask your first question. Share the unique 5-digit code with your audience to instantly start gathering real-time feedback!" 
+                },
+                { 
+                  icon: BookOpen, 
+                  title: "User Guide",    
+                  desc: "Full documentation on every VoTI feature.",         
+                  color: "bg-indigo-50 border-indigo-100 text-indigo-600",
+                  content: "1. Creating Polls: Use the rich text editor to format your questions. Add up to 10 options.\n2. Analytics: The dashboard provides real-time geographic and age-based insights.\n3. Moderation: As a creator, you can close polls early or delete them from the admin panel." 
+                },
+                { 
+                  icon: Shield,   
+                  title: "Privacy & Data", 
+                  desc: "How we collect and protect your information.",     
+                  color: "bg-emerald-50 border-emerald-100 text-emerald-600",
+                  content: "We take your privacy seriously. VoTI only collects basic demographic data (such as Age and Region) to generate aggregated poll insights. We never sell your personal information to third parties, and all geographic data is strictly anonymized before being plotted on the demographic maps." 
+                },
               ].map((card) => {
                 const Icon = card.icon;
+                const isExpanded = expandedCard === card.title;
                 return (
-                  <div key={card.title} className={`rounded-3xl border p-6 ${card.color} cursor-pointer hover:shadow-md transition-shadow`}>
-                    <Icon className="h-7 w-7 mb-3" />
+                  <div 
+                    key={card.title} 
+                    onClick={() => setExpandedCard(isExpanded ? null : card.title)}
+                    className={`rounded-3xl border p-6 ${card.color} cursor-pointer hover:shadow-md transition-all ${isExpanded ? 'ring-2 ring-indigo-400 bg-white dark:bg-zinc-800' : ''}`}
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <Icon className="h-7 w-7" />
+                      {isExpanded ? <ChevronUp className="h-5 w-5 opacity-50" /> : <ChevronDown className="h-5 w-5 opacity-50" />}
+                    </div>
                     <h3 className="font-black text-zinc-900 text-lg mb-1">{card.title}</h3>
-                    <p className="text-zinc-500 text-sm font-medium">{card.desc}</p>
+                    <p className="text-zinc-500 text-sm font-medium mb-3">{card.desc}</p>
+                    {isExpanded && (
+                      <div className="mt-4 pt-4 border-t border-black/10 animate-in slide-in-from-top-2">
+                        <p className="text-zinc-800 text-sm font-medium whitespace-pre-wrap leading-relaxed">
+                          {card.content}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 );
               })}
