@@ -143,9 +143,7 @@ export default function Navbar() {
             ) : (
               <button
                 onClick={() => {
-                  const el = document.getElementById("auth-section");
-                  if (el) el.scrollIntoView({ behavior: "smooth" });
-                  else signIn();
+                  signIn();
                 }}
                 className="bg-zinc-900 hover:bg-zinc-800 text-white font-bold py-2 px-5 rounded-full shadow-sm transform active:scale-95 transition-all text-sm"
               >
