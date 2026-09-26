@@ -28,7 +28,7 @@ export default function Navbar() {
   return (
     <nav className="sticky top-4 z-50 mx-4 sm:mx-8 lg:mx-auto max-w-7xl bg-white/70 dark:bg-zinc-900/80 backdrop-blur-xl border border-white/40 dark:border-zinc-700/50 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.06)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.2)] transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16 w-full">
+        <div className="flex justify-between items-center h-16 w-full gap-4 md:gap-8">
           {/* Left Side: Logo & Main Links */}
           <div className="flex items-center gap-12">
             <Link href="/" className="flex items-center space-x-2 group">
@@ -149,8 +149,8 @@ export default function Navbar() {
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden flex items-center gap-4">
-            
+          <div className="md:hidden flex items-center gap-2">
+            <ThemeToggle />
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="text-zinc-600 hover:text-indigo-600 p-2 rounded-xl focus:outline-none"
