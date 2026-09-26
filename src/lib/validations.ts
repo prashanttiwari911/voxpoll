@@ -147,7 +147,8 @@ export const voteSchema = z.object({
   optionIds: z
     .array(z.string().min(1, "Invalid option ID."))
     .min(1, "You must select at least one option.")
-    .max(10, "You cannot select more than 10 options."),
+    .max(10, "You cannot select more than 10 options.")
+    .refine((ids) => new Set(ids).size === ids.length, "You cannot select the same option multiple times."),
 });
 
 export type VoteInput = z.infer<typeof voteSchema>;

@@ -68,14 +68,20 @@ export async function createPoll(
     // Generate unique short code (naive retry mechanism could be added for production, but 90k space is fine for demo)
     const shortCode = generateShortCode();
 
+    const parsedScheduledAt = d.scheduledAt ? new Date(d.scheduledAt) : null;
+    let finalStatus = d.status;
+    if (parsedScheduledAt && parsedScheduledAt > new Date()) {
+      finalStatus = "DRAFT"; // Force draft if scheduled for the future
+    }
+
     const newPoll = await db.poll.create({
       data: {
         question: d.question,
         description: d.description?.trim() || null,
         category: d.category,
-        status: d.status,
+        status: finalStatus,
         closesAt: d.closesAt ? new Date(d.closesAt) : null,
-        scheduledAt: d.scheduledAt ? new Date(d.scheduledAt) : null,
+        scheduledAt: parsedScheduledAt,
         isMultipleChoice: d.isMultipleChoice,
         maxChoices: d.isMultipleChoice ? (d.maxChoices ?? 2) : 1,
         imageUrl: d.imageUrl || null,

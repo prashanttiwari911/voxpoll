@@ -45,7 +45,7 @@ This project was built as a production-oriented MCA submission demonstrating ful
 *   **Icons:** Lucide React
 
 ### Backend & Database
-*   **Database:** SQLite (via `better-sqlite3`)
+*   **Database:** PostgreSQL (Neon serverless)
 *   **ORM:** Prisma v7
 *   **Validation:** Zod v4 (Strict server-side validation)
 *   **Authentication:** NextAuth (Google OAuth + Developer Credentials)

@@ -58,8 +58,9 @@ export async function addComment(pollId: string, text: string, parentId?: string
 
     // Validate parent exists if this is a reply
     if (parentId) {
-      const parent = await db.comment.findUnique({ where: { id: parentId }, select: { id: true, userId: true } });
+      const parent = await db.comment.findUnique({ where: { id: parentId }, select: { id: true, userId: true, parentId: true } });
       if (!parent) return { success: false, error: "Parent comment not found." };
+      if (parent.parentId) return { success: false, error: "Replies cannot have replies." };
     }
 
     // Rate limit: max 10 comments per 10 min
