@@ -11,6 +11,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [showDevConsole, setShowDevConsole] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [otp, setOtp] = useState("");
 
   // Profile data state
   const [profile, setProfile] = useState({
@@ -21,6 +22,14 @@ export default function LoginPage() {
     occupation: "",
     image: "",
   });
+
+  const handleOtpSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!otp) return;
+    setLoading(true);
+    // NextAuth email provider verifies by passing the token in the callback URL
+    window.location.href = `/api/auth/callback/email?email=${encodeURIComponent(email)}&token=${otp}&callbackUrl=/dashboard`;
+  };
 
   const handleEmailCheck = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,8 +54,9 @@ export default function LoginPage() {
           toast.error("Account not found. Please select 'New User' to register.");
         } else {
           // Existing user -> Send OTP
-          await signIn("email", { email, callbackUrl: "/dashboard" });
-          toast.success("Magic link sent to your email!");
+          await signIn("email", { email, callbackUrl: "/dashboard", redirect: false });
+          toast.success("OTP sent to your email!");
+          setStep(3);
         }
       }
     } catch (err) {
@@ -69,8 +79,9 @@ export default function LoginPage() {
       
       if (!res.ok) throw new Error("Registration failed");
       
-      toast.success("Profile created! Sending login link...");
-      await signIn("email", { email, callbackUrl: "/dashboard" });
+      toast.success("Profile created! Sending OTP...");
+      await signIn("email", { email, callbackUrl: "/dashboard", redirect: false });
+      setStep(3);
     } catch (err) {
       toast.error("Registration failed. Please try again.");
     } finally {
@@ -89,14 +100,10 @@ export default function LoginPage() {
             <Sparkles className="h-8 w-8" />
           </div>
           <h1 className="text-3xl font-black text-zinc-900 dark:text-white flex justify-center items-center gap-2">
-            {step === 2 ? "Complete Profile" : isRegister ? "Create an Account" : "Welcome Back"}
+            {step === 3 ? "Enter OTP" : step === 2 ? "Complete Profile" : isRegister ? "Create an Account" : "Welcome Back"}
           </h1>
           <p className="text-zinc-500 dark:text-zinc-400 mt-2 font-medium">
-            {step === 2 
-              ? "Tell us a bit about yourself." 
-              : isRegister 
-                ? "Join VoTI to start creating polls." 
-                : "Sign in to access your VoTI dashboard."}
+            {step === 3 ? "Check your email for the 6-digit login code." : step === 2 ? "Tell us a bit about yourself." : isRegister ? "Join VoTI to start creating polls." : "Sign in to access your VoTI dashboard."}
           </p>
         </div>
 
@@ -164,7 +171,7 @@ export default function LoginPage() {
                 Continue with Google
               </button>
             </>
-          ) : (
+          ) : step === 2 ? (
             <form onSubmit={handleProfileSubmit} className="space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <div className="col-span-2">
@@ -204,7 +211,7 @@ export default function LoginPage() {
                 className="w-full mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-all disabled:opacity-70"
               >
                 <User className="h-4 w-4" />
-                {loading ? "Creating..." : "Create Account & Send Magic Link"}
+                {loading ? "Creating..." : "Create Account & Send OTP"}
               </button>
               <button
                 type="button"
@@ -212,6 +219,43 @@ export default function LoginPage() {
                 className="w-full py-2 text-sm text-zinc-500 font-semibold hover:text-zinc-800 dark:hover:text-zinc-200"
               >
                 Back
+              </button>
+            
+            </form>
+          ) : (
+            <form onSubmit={handleOtpSubmit} className="space-y-4">
+              <div className="text-center mb-6">
+                <div className="inline-flex items-center justify-center h-16 w-16 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-full mb-4">
+                  <Mail className="h-8 w-8" />
+                </div>
+                <p className="text-zinc-600 dark:text-zinc-400">
+                  We sent a 6-digit code to <strong>{email}</strong>
+                </p>
+              </div>
+              <div>
+                <input
+                  type="text"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  placeholder="123456"
+                  className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-4 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all text-center tracking-[0.5em] font-mono text-2xl"
+                  maxLength={6}
+                  required
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-all disabled:opacity-70"
+              >
+                {loading ? "Verifying..." : "Verify OTP & Sign In"}
+              </button>
+              <button
+                type="button"
+                onClick={() => setStep(1)}
+                className="w-full py-2 text-sm text-zinc-500 font-semibold hover:text-zinc-800 dark:hover:text-zinc-200"
+              >
+                Use a different email
               </button>
             </form>
           )}
