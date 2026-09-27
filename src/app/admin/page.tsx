@@ -1,12 +1,9 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "../api/auth/[...nextauth]/route";
-import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import {
-  Shield, Users, BarChart2, MessageCircle, Vote,
-  Trash2, CheckCircle, XCircle, ArrowLeft, AlertTriangle,
-} from "lucide-react";
+import { Shield, Users, BarChart2, MessageCircle, Vote, Trash2, CheckCircle, XCircle, ArrowLeft, AlertTriangle } from "lucide-react";
+import { authOptions } from "../api/auth/[...nextauth]/route";
+import { db } from "@/lib/db";
 import AdminUserRow from "./AdminUserRow";
 import AdminPollRow from "./AdminPollRow";
 
@@ -14,7 +11,6 @@ export const metadata = { title: "Admin — VoTI" };
 
 export default async function AdminPage() {
   const session = await getServerSession(authOptions);
-
   if (!session?.user?.email) redirect("/");
 
   const currentUser = await db.user.findUnique({
@@ -22,20 +18,12 @@ export default async function AdminPage() {
     select: { id: true, role: true },
   });
 
-  // RBAC gate — hard redirect for non-admins
-  if (!currentUser || (currentUser.role !== "ADMIN" && currentUser.role !== "MODERATOR")) {
-    redirect("/");
-  }
+  if (!currentUser || (currentUser.role !== "ADMIN" && currentUser.role !== "MODERATOR")) redirect("/");
 
-  // ── Aggregate stats ──
   const [userCount, pollCount, voteCount, commentCount] = await Promise.all([
-    db.user.count(),
-    db.poll.count(),
-    db.vote.count(),
-    db.comment.count(),
+    db.user.count(), db.poll.count(), db.vote.count(), db.comment.count(),
   ]);
 
-  // ── Recent users (last 20) ──
   const users = await db.user.findMany({
     orderBy: { emailVerified: "desc" },
     take: 20,
@@ -45,7 +33,6 @@ export default async function AdminPage() {
     },
   });
 
-  // ── Recent polls (last 30) ──
   const polls = await db.poll.findMany({
     orderBy: { createdAt: "desc" },
     take: 30,
@@ -64,7 +51,6 @@ export default async function AdminPage() {
 
   return (
     <div className="max-w-7xl mx-auto my-10 px-4 sm:px-6 lg:px-8 space-y-8">
-      {/* Header */}
       <div>
         <Link href="/" className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-400 hover:text-indigo-600 mb-4 transition-colors">
           <ArrowLeft className="h-4 w-4" /> Back
@@ -75,14 +61,11 @@ export default async function AdminPage() {
           </div>
           <div>
             <h1 className="text-2xl font-black text-slate-800">Admin Dashboard</h1>
-            <p className="text-sm text-slate-400">
-              {currentUser.role} view — full platform control
-            </p>
+            <p className="text-sm text-slate-400">{currentUser.role} view — full platform control</p>
           </div>
         </div>
       </div>
 
-      {/* Warning banner for moderators */}
       {currentUser.role === "MODERATOR" && (
         <div className="flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3 text-sm text-amber-800">
           <AlertTriangle className="h-4 w-4 shrink-0" />
@@ -90,7 +73,6 @@ export default async function AdminPage() {
         </div>
       )}
 
-      {/* Stats grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {stats.map((s) => (
           <div key={s.label} className="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm flex items-center gap-4">
@@ -103,7 +85,6 @@ export default async function AdminPage() {
         ))}
       </div>
 
-      {/* Users table */}
       <div className="bg-white border border-slate-100 rounded-3xl shadow-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
           <h2 className="text-lg font-black text-slate-800 flex items-center gap-2">
@@ -125,19 +106,13 @@ export default async function AdminPage() {
             </thead>
             <tbody className="divide-y divide-slate-50">
               {users.map((u) => (
-                <AdminUserRow
-                  key={u.id}
-                  user={u}
-                  currentUserRole={currentUser.role}
-                  isSelf={u.id === currentUser.id}
-                />
+                <AdminUserRow key={u.id} user={u} currentUserRole={currentUser.role} isSelf={u.id === currentUser.id} />
               ))}
             </tbody>
           </table>
         </div>
       </div>
 
-      {/* Polls table */}
       <div className="bg-white border border-slate-100 rounded-3xl shadow-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-slate-100">
           <h2 className="text-lg font-black text-slate-800 flex items-center gap-2">
@@ -158,9 +133,7 @@ export default async function AdminPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
-              {polls.map((p) => (
-                <AdminPollRow key={p.id} poll={p} />
-              ))}
+              {polls.map((p) => <AdminPollRow key={p.id} poll={p} />)}
             </tbody>
           </table>
         </div>

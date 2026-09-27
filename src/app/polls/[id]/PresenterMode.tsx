@@ -48,7 +48,7 @@ export default function PresenterMode({ pollId, question, totalVotes, options }:
 
   return (
     <div className="fixed inset-0 z-[200] bg-zinc-900 text-white flex flex-col animate-in fade-in">
-      {/* Header */}
+      
       <header className="flex justify-between items-center p-6 lg:p-10 border-b border-zinc-800">
         <div className="flex items-center gap-4">
           <span className="text-2xl font-black bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
@@ -68,9 +68,9 @@ export default function PresenterMode({ pollId, question, totalVotes, options }:
         </button>
       </header>
 
-      {/* Main Content */}
+      
       <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
-        {/* Left Side: Results */}
+        
         <div className="flex-1 p-6 lg:p-16 flex flex-col justify-center overflow-y-auto">
           <h1 className="text-4xl lg:text-6xl font-black text-white mb-16 leading-tight">
             {question}
@@ -109,7 +109,7 @@ export default function PresenterMode({ pollId, question, totalVotes, options }:
           </div>
         </div>
 
-        {/* Right Side: Join Info */}
+        
         <div className="w-full lg:w-96 bg-zinc-950 p-6 lg:p-12 border-t lg:border-t-0 lg:border-l border-zinc-800 flex flex-col justify-center items-center text-center">
           <h3 className="text-xl font-bold text-zinc-400 mb-8">Join the poll at</h3>
           <p className="text-3xl font-black text-indigo-400 break-all mb-8">{url.replace(/^https?:\/\//, '')}</p>

@@ -22,47 +22,41 @@ export default function PollAdminPanel({
   voteCount,
 }: PollAdminPanelProps) {
   const router = useRouter();
-  const [isEditing, setIsEditing] = useState(false);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-
-  const [question, setQuestion] = useState(initialQuestion);
-  const [description, setDescription] = useState(initialDescription ?? "");
-  const [closesAt, setClosesAt] = useState(
-    initialClosesAt ? initialClosesAt.slice(0, 16) : "" // datetime-local format
-  );
-
-  const [loading, setLoading] = useState(false);
+  const [state, setState] = useState({
+    isEditing: false,
+    showDeleteConfirm: false,
+    question: initialQuestion,
+    description: initialDescription ?? "",
+    closesAt: initialClosesAt ? initialClosesAt.slice(0, 16) : "",
+    loading: false
+  });
 
   const canEdit = voteCount === 0;
 
-  // ── Delete ──────────────────────────────────────────────────────────────
   const handleDelete = async () => {
-    setLoading(true);
+    setState(s => ({ ...s, loading: true }));
     const result = await deletePoll(pollId);
-    setLoading(false);
+    setState(s => ({ ...s, loading: false }));
     if (result.success) {
       toast.success("Poll deleted successfully.");
       router.push("/");
     } else {
       toast.error(result.error || "Could not delete poll.");
-      setShowDeleteConfirm(false);
+      setState(s => ({ ...s, showDeleteConfirm: false }));
     }
   };
 
-  // ── Edit ─────────────────────────────────────────────────────────────────
   const handleSave = async () => {
-    setLoading(true);
-
+    setState(s => ({ ...s, loading: true }));
     const result = await updatePoll(pollId, {
-      question,
-      description,
-      closesAt: closesAt || null,
+      question: state.question,
+      description: state.description,
+      closesAt: state.closesAt || null,
     });
-
-    setLoading(false);
+    setState(s => ({ ...s, loading: false }));
     if (result.success) {
       toast.success(result.message ?? "Saved!");
-      setIsEditing(false);
+      setState(s => ({ ...s, isEditing: false }));
       router.refresh();
     } else {
       toast.error(result.error || "Could not update poll.");
@@ -76,23 +70,22 @@ export default function PollAdminPanel({
           Creator Controls
         </span>
         <div className="flex items-center gap-2">
-          {/* Edit toggle */}
           <button
             id="poll-edit-btn"
             onClick={() => {
               if (!canEdit) return;
-              setIsEditing((v) => !v);
+              setState(s => ({ ...s, isEditing: !s.isEditing }));
             }}
             title={canEdit ? "Edit poll" : "Cannot edit — poll already has votes"}
             className={`inline-flex items-center space-x-1.5 text-xs font-bold px-3 py-1.5 rounded-xl border transition-all ${
-              isEditing
+              state.isEditing
                 ? "bg-slate-100 border-slate-200 text-slate-600"
                 : canEdit
                 ? "bg-white border-indigo-200 text-indigo-600 hover:bg-indigo-50"
                 : "bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed"
             }`}
           >
-            {isEditing ? (
+            {state.isEditing ? (
               <>
                 <X className="h-3.5 w-3.5" />
                 <span>Cancel</span>
@@ -105,10 +98,9 @@ export default function PollAdminPanel({
             )}
           </button>
 
-          {/* Delete */}
           <button
             id="poll-delete-btn"
-            onClick={() => setShowDeleteConfirm(true)}
+            onClick={() => setState(s => ({ ...s, showDeleteConfirm: true }))}
             className="inline-flex items-center space-x-1.5 text-xs font-bold px-3 py-1.5 rounded-xl border border-red-200 bg-white text-red-600 hover:bg-red-50 transition-all"
           >
             <Trash2 className="h-3.5 w-3.5" />
@@ -117,7 +109,6 @@ export default function PollAdminPanel({
         </div>
       </div>
 
-      {/* Locked-edit notice */}
       {!canEdit && (
         <p className="text-xs text-amber-700">
           ⚠️ This poll has <strong>{voteCount} votes</strong> — editing is locked to preserve data
@@ -125,15 +116,14 @@ export default function PollAdminPanel({
         </p>
       )}
 
-      {/* Edit form */}
-      {isEditing && canEdit && (
+      {state.isEditing && canEdit && (
         <div className="space-y-3 pt-1">
           <div>
             <label className="block text-xs font-bold text-slate-600 mb-1">Question</label>
             <input
               type="text"
-              value={question}
-              onChange={(e) => setQuestion(e.target.value)}
+              value={state.question}
+              onChange={(e) => setState(s => ({ ...s, question: e.target.value }))}
               maxLength={300}
               className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-400"
             />
@@ -143,8 +133,8 @@ export default function PollAdminPanel({
               Description (optional)
             </label>
             <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              value={state.description}
+              onChange={(e) => setState(s => ({ ...s, description: e.target.value }))}
               maxLength={1000}
               rows={2}
               className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
@@ -157,25 +147,24 @@ export default function PollAdminPanel({
             </label>
             <input
               type="datetime-local"
-              value={closesAt}
-              onChange={(e) => setClosesAt(e.target.value)}
+              value={state.closesAt}
+              onChange={(e) => setState(s => ({ ...s, closesAt: e.target.value }))}
               className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-400"
             />
           </div>
           <button
             id="poll-save-btn"
             onClick={handleSave}
-            disabled={loading}
+            disabled={state.loading}
             className="w-full flex justify-center items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-2 rounded-xl transition-all disabled:opacity-50"
           >
             <Save className="h-3.5 w-3.5" />
-            <span>{loading ? "Saving..." : "Save Changes"}</span>
+            <span>{state.loading ? "Saving..." : "Save Changes"}</span>
           </button>
         </div>
       )}
 
-      {/* Delete confirm */}
-      {showDeleteConfirm && (
+      {state.showDeleteConfirm && (
         <div className="border border-red-200 bg-red-50 rounded-xl p-3 space-y-2">
           <p className="text-xs font-bold text-red-700">
             Are you sure you want to permanently delete this poll and all its votes?
@@ -184,14 +173,14 @@ export default function PollAdminPanel({
             <button
               id="poll-delete-confirm-btn"
               onClick={handleDelete}
-              disabled={loading}
+              disabled={state.loading}
               className="flex-1 text-xs font-bold py-1.5 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-all disabled:opacity-50"
             >
-              {loading ? "Deleting..." : "Yes, Delete"}
+              {state.loading ? "Deleting..." : "Yes, Delete"}
             </button>
             <button
               id="poll-delete-cancel-btn"
-              onClick={() => setShowDeleteConfirm(false)}
+              onClick={() => setState(s => ({ ...s, showDeleteConfirm: false }))}
               className="flex-1 text-xs font-bold py-1.5 rounded-lg bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition-all"
             >
               Cancel

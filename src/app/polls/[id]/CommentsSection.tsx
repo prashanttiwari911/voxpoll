@@ -81,12 +81,7 @@ function CommentCard({
   onDelete: (id: string) => void;
   onLikeToggle: (id: string, liked: boolean, likes: number) => void;
 }) {
-  const [showReplyBox, setShowReplyBox] = useState(false);
-  const [showReplies, setShowReplies] = useState(true);
-  const [replyText, setReplyText] = useState("");
-  const [replyError, setReplyError] = useState<string | null>(null);
-  const [liked, setLiked] = useState(comment.likedByMe ?? false);
-  const [likeCount, setLikeCount] = useState(comment.likes);
+  const [state, setState] = useState({ showReplyBox: false, showReplies: true, replyText: "", replyError: null as string | null, liked: comment.likedByMe ?? false, likeCount: comment.likes });
   const [isPending, startTransition] = useTransition();
 
   const canDelete =
@@ -96,31 +91,31 @@ function CommentCard({
 
   const handleLike = () => {
     if (!isLoggedIn) return;
-    const newLiked = !liked;
-    const newCount = newLiked ? likeCount + 1 : likeCount - 1;
-    setLiked(newLiked);
-    setLikeCount(newCount);
+    const newLiked = !state.liked;
+    const newCount = newLiked ? state.likeCount + 1 : state.likeCount - 1;
+    setState(s => ({ ...s, liked: newLiked }));
+    setState(s => ({ ...s, likeCount: newCount }));
     onLikeToggle(comment.id, newLiked, newCount);
     startTransition(async () => {
       const res = await toggleCommentLike(comment.id);
       if (!res.success) {
         // revert on failure
-        setLiked(!newLiked);
-        setLikeCount(likeCount);
+        setState(s => ({ ...s, liked: !newLiked }));
+        setState(s => ({ ...s, likeCount: state.likeCount }));
       }
     });
   };
 
   const handleReply = async () => {
-    if (!replyText.trim()) return;
-    const res = await addComment(pollId, replyText, comment.id);
+    if (!state.replyText.trim()) return;
+    const res = await addComment(pollId, state.replyText, comment.id);
     if (res.success) {
-      onOptimisticReply(comment.id, replyText.trim());
-      setReplyText("");
-      setShowReplyBox(false);
-      setShowReplies(true);
+      onOptimisticReply(comment.id, state.replyText.trim());
+      setState(s => ({ ...s, replyText: "" }));
+      setState(s => ({ ...s, showReplyBox: false }));
+      setState(s => ({ ...s, showReplies: true }));
     } else {
-      setReplyError(res.error || "Could not post reply.");
+      setState(s => ({ ...s, replyError: res.error || "Could not post reply." }));
     }
   };
 
@@ -134,7 +129,7 @@ function CommentCard({
   return (
     <div className={`${depth > 0 ? "ml-8 border-l-2 border-indigo-50 pl-4" : ""}`}>
       <div className="flex items-start space-x-3 bg-white border border-slate-100 rounded-2xl p-3 shadow-sm">
-        {/* Avatar */}
+        
         <div className="shrink-0 mt-0.5">
           {comment.user.image ? (
             <img
@@ -147,7 +142,7 @@ function CommentCard({
           )}
         </div>
 
-        {/* Content */}
+        
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1 flex-wrap">
             <span className="text-xs font-bold text-slate-700">
@@ -176,25 +171,25 @@ function CommentCard({
           </div>
           <p className="text-sm text-slate-600 leading-relaxed break-words">{comment.text}</p>
 
-          {/* Actions row */}
+          
           <div className="flex items-center gap-3 mt-2">
-            {/* Like */}
+            
             <button
               onClick={handleLike}
               disabled={!isLoggedIn || isPending}
-              title={isLoggedIn ? (liked ? "Unlike" : "Like") : "Sign in to like"}
+              title={isLoggedIn ? (state.liked ? "Unlike" : "Like") : "Sign in to like"}
               className={`flex items-center gap-1 text-[11px] font-semibold transition-colors ${
-                liked ? "text-rose-500" : "text-slate-400 hover:text-rose-400"
+                state.liked ? "text-rose-500" : "text-slate-400 hover:text-rose-400"
               } disabled:opacity-40`}
             >
-              <Heart className={`h-3.5 w-3.5 ${liked ? "fill-rose-500" : ""}`} />
-              {likeCount > 0 && <span>{likeCount}</span>}
+              <Heart className={`h-3.5 w-3.5 ${state.liked ? "fill-rose-500" : ""}`} />
+              {state.likeCount > 0 && <span>{state.likeCount}</span>}
             </button>
 
-            {/* Reply — only top-level comments get replies (depth 0) */}
+            
             {depth === 0 && isLoggedIn && (
               <button
-                onClick={() => setShowReplyBox((v) => !v)}
+                onClick={() => setState(s => ({ ...s, showReplyBox: !s.showReplyBox }))}
                 className="flex items-center gap-1 text-[11px] font-semibold text-slate-400 hover:text-indigo-500 transition-colors"
               >
                 <Reply className="h-3.5 w-3.5" />
@@ -202,7 +197,7 @@ function CommentCard({
               </button>
             )}
 
-            {/* Delete */}
+            
             {canDelete && (
               <button
                 onClick={handleDelete}
@@ -213,18 +208,18 @@ function CommentCard({
             )}
           </div>
 
-          {/* Inline reply box */}
-          {showReplyBox && (
+          
+          {state.showReplyBox && (
             <div className="mt-3 space-y-1.5">
-              {replyError && (
+              {state.replyError && (
                 <p className="text-[10px] text-red-600 flex items-center gap-1">
-                  <AlertCircle className="h-3 w-3" /> {replyError}
+                  <AlertCircle className="h-3 w-3" /> {state.replyError}
                 </p>
               )}
               <div className="flex gap-2">
                 <textarea
-                  value={replyText}
-                  onChange={(e) => setReplyText(e.target.value)}
+                  value={state.replyText}
+                  onChange={(e) => setState(s => ({ ...s, replyText: e.target.value }))}
                   placeholder="Write a reply..."
                   maxLength={500}
                   rows={2}
@@ -232,7 +227,7 @@ function CommentCard({
                 />
                 <button
                   onClick={handleReply}
-                  disabled={!replyText.trim()}
+                  disabled={!state.replyText.trim()}
                   className="self-end p-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl disabled:opacity-40 transition-colors"
                 >
                   <Send className="h-3.5 w-3.5" />
@@ -243,17 +238,17 @@ function CommentCard({
         </div>
       </div>
 
-      {/* Replies */}
+      
       {replyCount > 0 && (
         <div className="mt-2 space-y-2">
           <button
-            onClick={() => setShowReplies((v) => !v)}
+            onClick={() => setState(s => ({ ...s, showReplies: !s.showReplies }))}
             className="flex items-center gap-1 text-[11px] font-semibold text-indigo-500 hover:text-indigo-700 ml-8 mb-1"
           >
-            {showReplies ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
-            {showReplies ? "Hide" : "Show"} {replyCount} {replyCount === 1 ? "reply" : "replies"}
+            {state.showReplies ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+            {state.showReplies ? "Hide" : "Show"} {replyCount} {replyCount === 1 ? "reply" : "replies"}
           </button>
-          {showReplies && comment.replies?.map((reply) => (
+          {state.showReplies && comment.replies?.map((reply) => (
             <CommentCard
               key={reply.id}
               comment={reply}
@@ -283,34 +278,31 @@ export default function CommentsSection({
   currentUserId,
   currentUserRole,
 }: CommentsSectionProps) {
-  const [flatComments, setFlatComments] = useState<CommentData[]>(initialComments);
-  const [text, setText] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [secState, setSecState] = useState({ flatComments: initialComments, text: "", loading: false, error: null as string | null });
 
-  const tree = buildTree(flatComments);
+  const tree = buildTree(secState.flatComments);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!text.trim()) return;
-    setLoading(true);
-    setError(null);
-    const result = await addComment(pollId, text);
-    setLoading(false);
+    if (!secState.text.trim()) return;
+    setSecState(s => ({ ...s, loading: true }));
+    setSecState(s => ({ ...s, error: null }));
+    const result = await addComment(pollId, secState.text);
+    setSecState(s => ({ ...s, loading: false }));
     if (result.success) {
       const newComment: CommentData = {
         id: result.commentId ?? `temp-${Date.now()}`,
-        text: text.trim(),
+        text: secState.text.trim(),
         createdAt: new Date(),
         likes: 0,
         parentId: null,
         user: { name: "You", id: currentUserId },
         replies: [],
       };
-      setFlatComments((prev) => [newComment, ...prev]);
-      setText("");
+      setSecState(s => ({ ...s, flatComments: [newComment, ...s.flatComments] }));
+      setSecState(s => ({ ...s, text: "" }));
     } else {
-      setError(result.error || "Could not post comment.");
+      setSecState(s => ({ ...s, error: result.error || "Could not post comment." }));
     }
   };
 
@@ -323,24 +315,22 @@ export default function CommentsSection({
       parentId,
       user: { name: "You", id: currentUserId },
     };
-    setFlatComments((prev) => [...prev, newReply]);
+    setSecState(s => ({ ...s, flatComments: [...s.flatComments, newReply] }));
   };
 
   const handleDelete = (id: string) => {
-    setFlatComments((prev) => prev.filter((c) => c.id !== id && c.parentId !== id));
+    setSecState(s => ({ ...s, flatComments: s.flatComments.filter((c) => c.id !== id && c.parentId !== id) }));
   };
 
   const handleLikeToggle = (id: string, liked: boolean, likes: number) => {
-    setFlatComments((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, likes, likedByMe: liked } : c))
-    );
+    setSecState(s => ({ ...s, flatComments: s.flatComments.map((c) => (c.id === id ? { ...c, likes, likedByMe: liked } : c)) }));
   };
 
-  const totalVisible = flatComments.filter((c) => !c.parentId).length;
+  const totalVisible = secState.flatComments.filter((c) => !c.parentId).length;
 
   return (
     <section className="space-y-4 mt-8 pt-8 border-t border-slate-100">
-      {/* Header */}
+      
       <div className="flex items-center space-x-2">
         <MessageCircle className="h-5 w-5 text-indigo-500" />
         <h2 className="text-lg font-black text-slate-800">
@@ -351,37 +341,37 @@ export default function CommentsSection({
         </h2>
       </div>
 
-      {/* Comment form */}
+      
       {isLoggedIn ? (
         <form onSubmit={handleSubmit} className="space-y-2">
-          {error && (
+          {secState.error && (
             <div className="flex items-start space-x-2 bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-xl text-xs">
               <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
-              <span>{error}</span>
+              <span>{secState.error}</span>
             </div>
           )}
           <div className="flex gap-2">
             <textarea
               id="comment-input"
-              value={text}
-              onChange={(e) => setText(e.target.value)}
+              value={secState.text}
+              onChange={(e) => setSecState(s => ({ ...s, text: e.target.value }))}
               placeholder="Share your thoughts on this poll..."
               maxLength={500}
               rows={2}
-              disabled={loading}
+              disabled={secState.loading}
               className="flex-1 px-4 py-2.5 rounded-2xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm text-slate-800 resize-none transition-all"
             />
             <button
               id="comment-submit-btn"
               type="submit"
-              disabled={loading || !text.trim()}
+              disabled={secState.loading || !secState.text.trim()}
               className="self-end flex items-center justify-center p-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
               title="Post comment"
             >
               <Send className="h-4 w-4" />
             </button>
           </div>
-          <p className="text-[10px] text-slate-400 text-right">{text.length}/500</p>
+          <p className="text-[10px] text-slate-400 text-right">{secState.text.length}/500</p>
         </form>
       ) : (
         <p className="text-sm text-slate-500 bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3">
@@ -389,7 +379,7 @@ export default function CommentsSection({
         </p>
       )}
 
-      {/* Comment tree */}
+      
       {tree.length === 0 ? (
         <p className="text-sm text-slate-400 text-center py-6">
           No comments yet. Be the first to share your thoughts!

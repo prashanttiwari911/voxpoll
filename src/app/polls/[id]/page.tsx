@@ -6,8 +6,7 @@ import PollResults from "./PollResults";
 import PollAdminPanel from "./PollAdminPanel";
 import SharePollModal from "./SharePollModal";
 import PresenterMode from "./PresenterMode";
-import CommentsSection from "./CommentsSection";
-import type { CommentData } from "./CommentsSection";
+import CommentsSection, { type CommentData } from "./CommentsSection";
 import Link from "next/link";
 import { ArrowLeft, Calendar, User, MessageCircle, BarChart, Clock, Download } from "lucide-react";
 import { calculatePollStats } from "@/lib/poll-stats";
@@ -16,7 +15,6 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-/** Returns a human-readable countdown or "CLOSED" label */
 function getClosingLabel(closesAt: Date | null): { label: string; isClosed: boolean } | null {
   if (!closesAt) return null;
   const now = new Date();

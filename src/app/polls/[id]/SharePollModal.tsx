@@ -12,21 +12,16 @@ interface SharePollModalProps {
 }
 
 export default function SharePollModal({ pollId, pollTitle = "Vote on this poll!" }: SharePollModalProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<"link" | "email">("link");
-  const [emailAddresses, setEmailAddresses] = useState("");
-  const [emailMessage, setEmailMessage] = useState("");
-  const [isSending, setIsSending] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [state, setState] = useState({ isOpen: false, activeTab: "link" as "link" | "email", emailAddresses: "", emailMessage: "", isSending: false, copied: false });
 
   const url = typeof window !== "undefined" ? `${window.location.origin}/polls/${pollId}` : "";
 
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(url);
-      setCopied(true);
-      toast.success("Link copied to clipboard!");
-      setTimeout(() => setCopied(false), 2500);
+      setState(s => ({ ...s, copied: true }));
+      toast.success("Link state.copied to clipboard!");
+      setTimeout(() => setState(s => ({ ...s, copied: false })), 2500);
     } catch {
       const el = document.createElement("textarea");
       el.value = url;
@@ -34,9 +29,9 @@ export default function SharePollModal({ pollId, pollTitle = "Vote on this poll!
       el.select();
       document.execCommand("copy");
       document.body.removeChild(el);
-      setCopied(true);
-      toast.success("Link copied to clipboard!");
-      setTimeout(() => setCopied(false), 2500);
+      setState(s => ({ ...s, copied: true }));
+      toast.success("Link state.copied to clipboard!");
+      setTimeout(() => setState(s => ({ ...s, copied: false })), 2500);
     }
   };
 
@@ -66,40 +61,40 @@ export default function SharePollModal({ pollId, pollTitle = "Vote on this poll!
         });
         toast.success("Shared successfully!");
       } catch (err) {
-        if (err instanceof Error && err.name !== "AbortError") setIsOpen(true);
+        if (err instanceof Error && err.name !== "AbortError") setState(s => ({ ...s, isOpen: true }));
       }
     } else {
-      setIsOpen(true);
+      setState(s => ({ ...s, isOpen: true }));
     }
   };
 
   const handleSendEmail = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!emailAddresses.trim()) {
+    if (!state.emailAddresses.trim()) {
       toast.error("Please enter at least one email address");
       return;
     }
 
-    const emails = emailAddresses.split(",").map(e => e.trim()).filter(Boolean);
+    const emails = state.emailAddresses.split(",").map(e => e.trim()).filter(Boolean);
     
-    setIsSending(true);
+    setState(s => ({ ...s, isSending: true }));
     try {
       const res = await fetch(`/api/polls/${pollId}/share`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ emails, message: emailMessage }),
+        body: JSON.stringify({ emails, message: state.emailMessage }),
       });
 
       if (!res.ok) throw new Error("Failed to send invites");
 
       toast.success("Invites sent successfully!");
-      setEmailAddresses("");
-      setEmailMessage("");
-      setIsOpen(false);
+      setState(s => ({ ...s, emailAddresses: "" }));
+      setState(s => ({ ...s, emailMessage: "" }));
+      setState(s => ({ ...s, isOpen: false }));
     } catch (err) {
       toast.error("Could not send emails. Please try again.");
     } finally {
-      setIsSending(false);
+      setState(s => ({ ...s, isSending: false }));
     }
   };
 
@@ -114,25 +109,25 @@ export default function SharePollModal({ pollId, pollTitle = "Vote on this poll!
         <span>Share</span>
       </button>
 
-      {isOpen && (
+      {state.isOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-zinc-900/60 backdrop-blur-sm animate-in fade-in">
           <div className="bg-white dark:bg-zinc-950 rounded-3xl shadow-2xl max-w-sm w-full p-6 animate-in zoom-in-95 border border-zinc-200 dark:border-zinc-800">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-black text-zinc-900 dark:text-zinc-100">Share Poll</h3>
               <button
-                onClick={() => setIsOpen(false)}
+                onClick={() => setState(s => ({ ...s, isOpen: false }))}
                 className="text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 bg-zinc-50 dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-800 p-2 rounded-full transition-colors"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
-            {/* Tabs */}
+            
             <div className="flex gap-2 border-b border-zinc-100 dark:border-zinc-800 mb-5">
               <button
-                onClick={() => setActiveTab("link")}
+                onClick={() => setState(s => ({ ...s, activeTab: "link" }))}
                 className={`pb-2 text-sm font-bold transition-colors border-b-2 ${
-                  activeTab === "link"
+                  state.activeTab === "link"
                     ? "border-indigo-600 text-indigo-600 dark:text-indigo-400"
                     : "border-transparent text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
                 }`}
@@ -140,9 +135,9 @@ export default function SharePollModal({ pollId, pollTitle = "Vote on this poll!
                 Link & QR
               </button>
               <button
-                onClick={() => setActiveTab("email")}
+                onClick={() => setState(s => ({ ...s, activeTab: "email" }))}
                 className={`pb-2 text-sm font-bold transition-colors border-b-2 ${
-                  activeTab === "email"
+                  state.activeTab === "email"
                     ? "border-indigo-600 text-indigo-600 dark:text-indigo-400"
                     : "border-transparent text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
                 }`}
@@ -151,7 +146,7 @@ export default function SharePollModal({ pollId, pollTitle = "Vote on this poll!
               </button>
             </div>
 
-            {activeTab === "link" ? (
+            {state.activeTab === "link" ? (
               <div className="space-y-6">
 
                 <div className="flex flex-col items-center justify-center p-4 border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-2xl">
@@ -177,7 +172,7 @@ export default function SharePollModal({ pollId, pollTitle = "Vote on this poll!
                     className="flex-shrink-0 bg-indigo-600 hover:bg-indigo-700 text-white p-3 rounded-xl transition-colors"
                     title="Copy Link"
                   >
-                    {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                    {state.copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                   </button>
                   <button
                     onClick={handleNativeShare}
@@ -197,8 +192,8 @@ export default function SharePollModal({ pollId, pollTitle = "Vote on this poll!
                     type="text"
                     required
                     placeholder="friend@example.com, team@company.com"
-                    value={emailAddresses}
-                    onChange={(e) => setEmailAddresses(e.target.value)}
+                    value={state.emailAddresses}
+                    onChange={(e) => setState(s => ({ ...s, emailAddresses: e.target.value }))}
                     className="w-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-800 dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                   <p className="text-[10px] text-zinc-400 mt-1">Separate multiple emails with commas</p>
@@ -208,17 +203,17 @@ export default function SharePollModal({ pollId, pollTitle = "Vote on this poll!
                   <textarea
                     rows={3}
                     placeholder="Hey! I'd love your opinion on this..."
-                    value={emailMessage}
-                    onChange={(e) => setEmailMessage(e.target.value)}
+                    value={state.emailMessage}
+                    onChange={(e) => setState(s => ({ ...s, emailMessage: e.target.value }))}
                     className="w-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-800 dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
                   />
                 </div>
                 <button
                   type="submit"
-                  disabled={isSending}
+                  disabled={state.isSending}
                   className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center"
                 >
-                  {isSending ? "Sending Invites..." : "Send Email Invites"}
+                  {state.isSending ? "Sending Invites..." : "Send Email Invites"}
                 </button>
               </form>
             )}

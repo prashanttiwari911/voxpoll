@@ -3,15 +3,10 @@ import { db } from "@/lib/db";
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    const { email, name, age, address, gender, occupation, image } = body;
+    const { email, name, age, address, gender, occupation, image } = await req.json();
+    if (!email) return NextResponse.json({ error: "Email is required" }, { status: 400 });
     
-    if (!email) {
-      return NextResponse.json({ error: "Email is required" }, { status: 400 });
-    }
-
-    const existing = await db.user.findUnique({ where: { email } });
-    if (existing) {
+    if (await db.user.findUnique({ where: { email } })) {
       return NextResponse.json({ error: "Email already exists" }, { status: 400 });
     }
 

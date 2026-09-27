@@ -2,8 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useTransition, useState } from "react";
-import { adminSetUserRole } from "./actions";
 import { Shield, User, UserCheck } from "lucide-react";
+import { adminSetUserRole } from "./actions";
 
 interface AdminUserRowProps {
   user: {
@@ -47,7 +47,6 @@ export default function AdminUserRow({ user, currentUserRole, isSelf }: AdminUse
 
   return (
     <tr className="hover:bg-slate-50 transition-colors">
-      {/* User info */}
       <td className="px-6 py-3">
         <div>
           <span className="font-semibold text-slate-800">{user.name || "—"}</span>
@@ -55,25 +54,17 @@ export default function AdminUserRow({ user, currentUserRole, isSelf }: AdminUse
           {error && <span className="block text-[11px] text-red-500 mt-0.5">{error}</span>}
         </div>
       </td>
-
-      {/* Role badge */}
       <td className="px-4 py-3">
         <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold ${ROLE_STYLES[user.role] ?? ROLE_STYLES.USER}`}>
           {ROLE_ICONS[user.role]}
           {user.role}
         </span>
       </td>
-
-      {/* Age / Region */}
       <td className="px-4 py-3 text-xs text-slate-500">
         {user.age ? `${user.age} yrs` : "—"} · {user.address || "—"}
       </td>
-
-      {/* Counts */}
       <td className="px-4 py-3 text-center text-xs font-bold text-slate-600">{user._count.polls}</td>
       <td className="px-4 py-3 text-center text-xs font-bold text-slate-600">{user._count.votes}</td>
-
-      {/* Actions */}
       <td className="px-4 py-3 text-center">
         {currentUserRole === "ADMIN" && !isSelf ? (
           <select

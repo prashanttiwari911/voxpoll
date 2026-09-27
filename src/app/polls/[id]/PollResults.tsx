@@ -12,9 +12,6 @@ const IndiaMap = dynamic(() => import("./IndiaMap"), { ssr: false, loading: () =
 
 const COLORS = ["#6366f1", "#f59e0b", "#10b981", "#ec4899", "#8b5cf6", "#06b6d4", "#f97316", "#14b8a6"];
 
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
 export interface OptionResult {
   id: string;
   text: string;
@@ -46,13 +43,8 @@ interface PollResultsProps {
   trendData: TrendDataPoint[];
 }
 
-// ---------------------------------------------------------------------------
-// Color palette
-// ---------------------------------------------------------------------------
 
 
-// Active shape removed — Recharts v3 Pie type doesn't accept activeIndex/activeShape
-// Use Tooltip + Legend for interactivity instead.
 
 type TabKey = "pie" | "age" | "region" | "trend";
 const TABS: { key: TabKey; label: string; icon: React.ReactNode }[] = [
@@ -62,9 +54,6 @@ const TABS: { key: TabKey; label: string; icon: React.ReactNode }[] = [
   { key: "trend",    label: "Trend",      icon: <TrendingUp className="h-3.5 w-3.5" /> },
 ];
 
-// ---------------------------------------------------------------------------
-// Main component
-// ---------------------------------------------------------------------------
 export default function PollResults({
   options, totalVotes, ageData, regionData, trendData,
 }: PollResultsProps) {
@@ -73,16 +62,13 @@ export default function PollResults({
   const sortedOptions = [...options].sort((a, b) => b.count - a.count);
   const leader = sortedOptions[0];
 
-  // Pie chart data
-  const pieData = options.map((o) => ({ name: o.text, value: o.count }));
+    const pieData = options.map((o) => ({ name: o.text, value: o.count }));
 
-  // Region bar data (horizontal) — top 8
-  const noVotes = totalVotes === 0;
+    const noVotes = totalVotes === 0;
 
   return (
     <div className="space-y-8">
-      {/* ── Live Results ── */}
-      <div className="space-y-5 bg-white dark:bg-zinc-900 border border-slate-100 dark:border-zinc-800 rounded-3xl p-6 shadow-sm transition-colors">
+            <div className="space-y-5 bg-white dark:bg-zinc-900 border border-slate-100 dark:border-zinc-800 rounded-3xl p-6 shadow-sm transition-colors">
         <div className="flex justify-between items-end border-b border-slate-100 dark:border-zinc-800 pb-3">
           <div>
             <h2 className="text-lg font-black text-slate-800 dark:text-zinc-100 flex items-center gap-2">
@@ -151,8 +137,7 @@ export default function PollResults({
         )}
       </div>
 
-      {/* ── Demographics & Insights ── */}
-      <div className="space-y-4">
+            <div className="space-y-4">
         <h3 className="text-base font-black text-slate-800 dark:text-zinc-100 border-b border-slate-100 dark:border-zinc-800 pb-2">Demographics</h3>
         
         {/* Summary Statistics */}
@@ -196,8 +181,7 @@ export default function PollResults({
         {/* Tab panels */}
         <div className="bg-white dark:bg-zinc-900 border border-slate-100 dark:border-zinc-800 rounded-3xl p-6 shadow-sm min-h-[320px]">
           
-          {/* ── Vote Share Pie ── */}
-          {activeTab === "pie" && (
+                    {activeTab === "pie" && (
             <div className="space-y-4">
               <h3 className="text-sm font-black text-slate-700 flex items-center gap-2">
                 <PieIcon className="h-4 w-4 text-indigo-500" /> Overall Share
@@ -223,8 +207,7 @@ export default function PollResults({
             </div>
           )}
 
-          {/* ── Age Breakdown ── */}
-          {activeTab === "age" && (
+                    {activeTab === "age" && (
             <div className="space-y-4">
               <h3 className="text-sm font-black text-slate-700 flex items-center gap-2">
                 <Users className="h-4 w-4 text-pink-500" /> Responses by Age Group
@@ -239,8 +222,7 @@ export default function PollResults({
             </div>
           )}
 
-          {/* ── Region Heatmap ── */}
-          {activeTab === "region" && (
+                    {activeTab === "region" && (
             <div className="space-y-4">
               <h3 className="text-sm font-black text-slate-700 flex items-center gap-2">
                 <Globe className="h-4 w-4 text-emerald-500" /> Geographic Distribution
@@ -255,8 +237,7 @@ export default function PollResults({
             </div>
           )}
 
-          {/* ── Vote Trend Line ── */}
-          {activeTab === "trend" && (
+                    {activeTab === "trend" && (
             <div className="space-y-4">
               <h3 className="text-sm font-black text-slate-700 flex items-center gap-2">
                 <TrendingUp className="h-4 w-4 text-violet-500" /> Participation Trend

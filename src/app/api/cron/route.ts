@@ -5,34 +5,17 @@ export const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
   try {
-    // Ideally, secure this endpoint with a CRON_SECRET token
-    // const authHeader = req.headers.get("authorization");
-    // if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    //   return new NextResponse("Unauthorized", { status: 401 });
-    // }
-
     const now = new Date();
-
-    const publishResult = await db.poll.updateMany({
-      where: {
-        status: "DRAFT",
-        scheduledAt: { lte: now },
-      },
-      data: {
-        status: "PUBLISHED",
-        scheduledAt: null, // Clear it out once published
-      },
-    });
-
-    const closeResult = await db.poll.updateMany({
-      where: {
-        status: "PUBLISHED",
-        closesAt: { lte: now },
-      },
-      data: {
-        status: "CLOSED",
-      },
-    });
+    const [publishResult, closeResult] = await Promise.all([
+      db.poll.updateMany({
+        where: { status: "DRAFT", scheduledAt: { lte: now } },
+        data: { status: "PUBLISHED", scheduledAt: null },
+      }),
+      db.poll.updateMany({
+        where: { status: "PUBLISHED", closesAt: { lte: now } },
+        data: { status: "CLOSED" },
+      })
+    ]);
 
     return NextResponse.json({
       success: true,

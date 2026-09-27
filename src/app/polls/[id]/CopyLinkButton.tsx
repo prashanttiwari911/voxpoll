@@ -17,8 +17,7 @@ export default function CopyLinkButton({ pollId }: CopyLinkButtonProps) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
     } catch {
-      // Fallback for browsers that block clipboard in non-HTTPS contexts
-      const url = `${window.location.origin}/polls/${pollId}`;
+            const url = `${window.location.origin}/polls/${pollId}`;
       const el = document.createElement("textarea");
       el.value = url;
       document.body.appendChild(el);

@@ -27,45 +27,44 @@ export default function PollVotingForm({
   maxChoices = 1,
 }: PollVotingFormProps) {
   const router = useRouter();
-  const [selectedIds, setSelectedIds]     = useState<string[]>([]);
-  const [loading, setLoading]             = useState(false);
-  const [success, setSuccess]             = useState(false);
-  const [showConfirm, setShowConfirm]     = useState(false);
+  const [state, setState] = useState({
+    selectedIds: [] as string[],
+    loading: false,
+    success: false,
+    showConfirm: false,
+  });
 
-  // ── Selection logic ──────────────────────────────────────────────────────
   const toggleOption = (id: string) => {
     if (isMultipleChoice) {
-      setSelectedIds((prev) => {
-        if (prev.includes(id)) return prev.filter((x) => x !== id);
-        if (prev.length >= maxChoices) {
+      setState((prev) => {
+        const prevIds = prev.selectedIds;
+        if (prevIds.includes(id)) return { ...prev, selectedIds: prevIds.filter((x) => x !== id) };
+        if (prevIds.length >= maxChoices) {
           toast.error(`You can select at most ${maxChoices} option${maxChoices > 1 ? "s" : ""}.`);
           return prev;
         }
-        return [...prev, id];
+        return { ...prev, selectedIds: [...prevIds, id] };
       });
     } else {
-      setSelectedIds([id]);
+      setState(s => ({ ...s, selectedIds: [id] }));
     }
   };
 
-  // ── Submit flow ───────────────────────────────────────────────────────────
   const handleInitialSubmit = () => {
-    if (selectedIds.length === 0) {
+    if (state.selectedIds.length === 0) {
       toast.error("Please select at least one option before voting.");
       return;
     }
-    setShowConfirm(true);
+    setState(s => ({ ...s, showConfirm: true }));
   };
 
   const handleConfirmVote = async () => {
-    setLoading(true);
-    setShowConfirm(false);
+    setState(s => ({ ...s, loading: true, showConfirm: false }));
+    const result = await submitVote(pollId, state.selectedIds);
+    setState(s => ({ ...s, loading: false }));
 
-    const result = await submitVote(pollId, selectedIds);
-
-    setLoading(false);
     if (result.success) {
-      setSuccess(true);
+      setState(s => ({ ...s, success: true }));
       toast.success("Vote cast successfully!");
       router.refresh();
     } else {
@@ -76,12 +75,11 @@ export default function PollVotingForm({
     }
   };
 
-  const selectedTexts = selectedIds
+  const selectedTexts = state.selectedIds
     .map((id) => options.find((o) => o.id === id)?.text)
     .filter(Boolean) as string[];
 
-  // ── Success ───────────────────────────────────────────────────────────────
-  if (success) {
+  if (state.success) {
     return (
       <div className="flex flex-col items-center justify-center p-8 bg-emerald-50 border-2 border-emerald-200 rounded-3xl text-center space-y-3 animate-in fade-in slide-in-from-bottom-2">
         <div className="h-14 w-14 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center">
@@ -97,27 +95,25 @@ export default function PollVotingForm({
 
   return (
     <div className="space-y-5 relative">
-      {/* Multi-choice hint */}
-      {isMultipleChoice && (
+            {isMultipleChoice && (
         <div className="flex items-center justify-between bg-indigo-50 border border-indigo-100 rounded-xl px-4 py-2.5">
           <p className="text-sm font-bold text-indigo-700">
             Select up to <span className="underline underline-offset-2">{maxChoices}</span> option{maxChoices > 1 ? "s" : ""}
           </p>
           <span className={`text-sm font-black px-3 py-1 rounded-full transition-colors ${
-            selectedIds.length === maxChoices
+            state.selectedIds.length === maxChoices
               ? "bg-indigo-600 text-white"
               : "bg-white text-indigo-500 border border-indigo-200"
           }`}>
-            {selectedIds.length} / {maxChoices}
+            {state.selectedIds.length} / {maxChoices}
           </span>
         </div>
       )}
 
-      {/* Options */}
-      <div className="space-y-3">
+            <div className="space-y-3">
         {options.map((opt, index) => {
-          const isSelected = selectedIds.includes(opt.id);
-          const atLimit    = isMultipleChoice && selectedIds.length >= maxChoices && !isSelected;
+          const isSelected = state.selectedIds.includes(opt.id);
+          const atLimit    = isMultipleChoice && state.selectedIds.length >= maxChoices && !isSelected;
 
           return (
             <button
@@ -135,8 +131,7 @@ export default function PollVotingForm({
               }`}
             >
               <div className="flex items-center gap-4">
-                {/* Index bubble */}
-                <div className={`flex items-center justify-center h-7 w-7 rounded-full text-xs font-black transition-colors shrink-0 ${
+                                <div className={`flex items-center justify-center h-7 w-7 rounded-full text-xs font-black transition-colors shrink-0 ${
                   isSelected
                     ? "bg-indigo-600 text-white"
                     : "bg-slate-100 text-slate-500 group-hover:bg-indigo-100 group-hover:text-indigo-600"
@@ -150,8 +145,7 @@ export default function PollVotingForm({
                 </span>
               </div>
 
-              {/* Checkbox or Radio indicator */}
-              {isMultipleChoice ? (
+                            {isMultipleChoice ? (
                 <div className={`h-6 w-6 rounded-md border-2 flex items-center justify-center shrink-0 transition-colors ${
                   isSelected ? "border-indigo-600 bg-indigo-600" : "border-slate-300"
                 }`}>
@@ -169,29 +163,27 @@ export default function PollVotingForm({
         })}
       </div>
 
-      {/* Submit button */}
-      <button
+            <button
         onClick={handleInitialSubmit}
-        disabled={loading || selectedIds.length === 0}
+        disabled={state.loading || state.selectedIds.length === 0}
         className="w-full flex justify-center items-center gap-2 bg-slate-900 hover:bg-indigo-600 text-white font-bold py-4 px-4 rounded-2xl shadow-lg active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {loading ? (
+        {state.loading ? (
           <span>Casting your vote…</span>
         ) : (
           <span>
-            Submit {selectedIds.length > 1 ? `${selectedIds.length} Votes` : "My Vote"}
+            Submit {state.selectedIds.length > 1 ? `${state.selectedIds.length} Votes` : "My Vote"}
           </span>
         )}
       </button>
 
-      {/* Confirmation Modal */}
-      {showConfirm && (
+            {state.showConfirm && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in"
           role="dialog"
           aria-modal="true"
           aria-labelledby="confirm-title"
-          onKeyDown={(e) => e.key === "Escape" && setShowConfirm(false)}
+          onKeyDown={(e) => e.key === "Escape" && setState(s => ({ ...s, showConfirm: false }))}
         >
           <div className="bg-white rounded-3xl p-6 md:p-8 max-w-sm w-full shadow-2xl animate-in zoom-in-95">
             <h3 id="confirm-title" className="text-xl font-black text-slate-800 mb-2">
@@ -209,18 +201,18 @@ export default function PollVotingForm({
             <p className="text-xs text-slate-400 font-medium mb-5">Your vote cannot be changed after submission.</p>
             <div className="flex gap-3">
               <button
-                onClick={() => setShowConfirm(false)}
-                disabled={loading}
+                onClick={() => setState(s => ({ ...s, showConfirm: false }))}
+                disabled={state.loading}
                 className="flex-1 py-3 px-4 rounded-xl font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors"
               >
                 Go Back
               </button>
               <button
                 onClick={handleConfirmVote}
-                disabled={loading}
+                disabled={state.loading}
                 className="flex-1 py-3 px-4 rounded-xl font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors flex justify-center items-center"
               >
-                {loading ? "Casting…" : "Confirm Vote"}
+                {state.loading ? "Casting…" : "Confirm Vote"}
               </button>
             </div>
           </div>

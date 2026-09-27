@@ -80,8 +80,7 @@ export default function IndiaMap({ data }: IndiaMapProps) {
                   stroke="#ffffff"
                   strokeWidth={0.7}
                   style={
-                    // @types/react-simple-maps is missing the correct structure for interactive states
-                    {
+                                        {
                       default: { outline: "none" },
                       hover: { fill: "#10b981", outline: "none", cursor: "pointer" },
                       pressed: { outline: "none" },
