@@ -7,6 +7,16 @@ const nextConfig: NextConfig = {
     root: __dirname,
   },
 
+  async rewrites() {
+    return [
+      {
+        source: "/api/sentiment/:path*",
+        // Proxy to sentiment microservice, defaults to Docker Compose service name or localhost
+        destination: (process.env.SENTIMENT_SERVICE_URL || "http://localhost:8000") + "/:path*", 
+      },
+    ];
+  },
+
   async headers() {
     return [
       {

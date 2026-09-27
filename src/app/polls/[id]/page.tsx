@@ -93,6 +93,13 @@ export default async function PollPage({ params }: PageProps) {
 
   const { totalVoters, totalVotes, optionsResults, ageData, regionData, trendData } = calculatePollStats(poll.votes, poll.options);
   const resultProps = { options: optionsResults, totalVotes, ageData, regionData, trendData };
+  const resultsState = !session
+    ? ["space-y-6", "bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-2xl text-sm font-semibold", "🔒 Cast your vote! Please sign in using the dashboard or homepage to participate in this poll."]
+    : isClosed
+      ? ["space-y-4", "bg-red-50 border border-red-200 text-red-800 p-4 rounded-2xl text-sm font-bold flex items-center space-x-2", "🔒 This poll has closed. Here are the final results."]
+      : hasVoted
+        ? ["space-y-4", "bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-2xl text-sm font-bold flex items-center space-x-2", "✅ You voted on this poll! Here are the live results."]
+        : null;
 
   return (
     <div className="max-w-4xl mx-auto my-12 px-4 sm:px-6">
@@ -187,25 +194,9 @@ export default async function PollPage({ params }: PageProps) {
             />
           )}
 
-          {!session ? (
-            <div className="space-y-6">
-              <div className="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-2xl text-sm font-semibold">
-                🔒 Cast your vote! Please sign in using the dashboard or homepage to participate in this poll.
-              </div>
-              <PollResults {...resultProps} />
-            </div>
-          ) : isClosed ? (
-            <div className="space-y-4">
-              <div className="bg-red-50 border border-red-200 text-red-800 p-4 rounded-2xl text-sm font-bold flex items-center space-x-2">
-                <span>🔒 This poll has closed. Here are the final results.</span>
-              </div>
-              <PollResults {...resultProps} />
-            </div>
-          ) : hasVoted ? (
-            <div className="space-y-4">
-              <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-2xl text-sm font-bold flex items-center space-x-2">
-                <span>✅ You voted on this poll! Here are the live results.</span>
-              </div>
+          {resultsState ? (
+            <div className={resultsState[0]}>
+              <div className={resultsState[1]}>{resultsState[2]}</div>
               <PollResults {...resultProps} />
             </div>
           ) : !isProfileComplete ? (
