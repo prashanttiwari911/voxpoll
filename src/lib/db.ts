@@ -3,7 +3,11 @@ import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
 import "@/lib/env";
 
-const connectionString = process.env.DATABASE_URL;
+const originalConnectionString = process.env.DATABASE_URL || "";
+// Safely append uselibpqcompat=1 to silence the node-postgres (pg) 8.11+ SECURITY WARNING regarding sslmode
+const connectionString = originalConnectionString.includes("?") 
+  ? `${originalConnectionString}&uselibpqcompat=1`
+  : `${originalConnectionString}?uselibpqcompat=1`;
 
 // Configure pool to handle serverless cold starts gracefully
 const pool = new Pool({ 
@@ -24,13 +28,13 @@ export const db = baseClient.$extends({
       async $allOperations({ operation, args, query }) {
         if (operation === 'delete') {
           return baseClient.poll.update({
-            where: args.where,
+            where: (args as any).where,
             data: { deletedAt: new Date() },
           });
         }
         if (operation === 'deleteMany') {
           return baseClient.poll.updateMany({
-            where: args.where,
+            where: (args as any).where,
             data: { deletedAt: new Date() },
           });
         }
@@ -44,13 +48,13 @@ export const db = baseClient.$extends({
       async $allOperations({ operation, args, query }) {
         if (operation === 'delete') {
           return baseClient.user.update({
-            where: args.where,
+            where: (args as any).where,
             data: { deletedAt: new Date() },
           });
         }
         if (operation === 'deleteMany') {
           return baseClient.user.updateMany({
-            where: args.where,
+            where: (args as any).where,
             data: { deletedAt: new Date() },
           });
         }
