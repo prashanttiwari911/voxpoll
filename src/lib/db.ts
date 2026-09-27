@@ -4,10 +4,8 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import "@/lib/env";
 
 const originalConnectionString = process.env.DATABASE_URL || "";
-// Safely append uselibpqcompat=1 to silence the node-postgres (pg) 8.11+ SECURITY WARNING regarding sslmode
-const connectionString = originalConnectionString.includes("?") 
-  ? `${originalConnectionString}&uselibpqcompat=1`
-  : `${originalConnectionString}?uselibpqcompat=1`;
+// Replace sslmode=require with sslmode=verify-full to silence the node-postgres (pg) 8.11+ SECURITY WARNING
+const connectionString = originalConnectionString.replace(/sslmode=require/g, "sslmode=verify-full");
 
 // Configure pool to handle serverless cold starts gracefully
 const pool = new Pool({ 
