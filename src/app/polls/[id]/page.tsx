@@ -3,7 +3,6 @@ import { authOptions } from "../../api/auth/[...nextauth]/route";
 import { db } from "@/lib/db";
 import PollVotingForm from "./PollVotingForm";
 import PollResults from "./PollResults";
-import type { TrendDataPoint } from "./PollResults";
 import PollAdminPanel from "./PollAdminPanel";
 import SharePollModal from "./SharePollModal";
 import PresenterMode from "./PresenterMode";
@@ -36,26 +35,20 @@ function getClosingLabel(closesAt: Date | null): { label: string; isClosed: bool
 export default async function PollPage({ params }: PageProps) {
   const { id } = await params;
 
-  // 1. Fetch poll details
   const poll = await db.poll.findUnique({
     where: { id },
     include: {
       options: { include: { votes: true } },
-      // Only select demographic fields from users — not full user objects
-votes: {
-  select: {
-    id: true,
-    userId: true,
-    optionId: true,
-    createdAt: true,
-    user: {
-      select: {
-        age: true,
-        address: true
-      }
-    }
-  }
-},      creator: true,
+      votes: {
+        select: {
+          id: true,
+          userId: true,
+          optionId: true,
+          createdAt: true,
+          user: { select: { age: true, address: true } },
+        },
+      },
+      creator: true,
       comments: {
         include: { user: { select: { id: true, name: true, image: true } } },
         orderBy: { createdAt: "asc" },
@@ -78,11 +71,9 @@ votes: {
     );
   }
 
-  // 2. Session + ownership
   const session = await getServerSession(authOptions);
   const isCreator = session?.user?.email === poll.creator.email;
 
-  // Current viewer's DB record (for role + userId)
   const currentUser = session?.user?.email
     ? await db.user.findUnique({
         where: { email: session.user.email },
@@ -90,23 +81,20 @@ votes: {
       })
     : null;
 
-  // 3. Voting state
   const hasVoted = currentUser
     ? poll.votes.some((vote) => vote.userId === currentUser.id)
     : false;
   const isProfileComplete = currentUser?.age && currentUser?.address;
 
-  // 4. Closing status
   const closingInfo = getClosingLabel(poll.closesAt);
   const isClosed = closingInfo?.isClosed ?? false;
 
-  // Lazy Evaluation DB sync for expired polls
   if (isClosed && poll.status === "PUBLISHED") {
     db.poll.update({ where: { id: poll.id }, data: { status: "CLOSED" } }).catch(console.error);
   }
 
-  // 5-8. Compute all poll statistics (demographics, charts, unique voters)
   const { totalVoters, totalVotes, optionsResults, ageData, regionData, trendData } = calculatePollStats(poll.votes, poll.options);
+  const resultProps = { options: optionsResults, totalVotes, ageData, regionData, trendData };
 
   return (
     <div className="max-w-4xl mx-auto my-12 px-4 sm:px-6">
@@ -119,7 +107,6 @@ votes: {
       </Link>
 
       <div className="bg-white dark:bg-zinc-900 border border-indigo-50 dark:border-zinc-800 rounded-3xl shadow-xl overflow-hidden">
-        {/* Category Header */}
         <div className="bg-linear-to-r from-indigo-500 via-indigo-600 to-violet-600 text-white relative">
           {poll.imageUrl && (
             <div className="w-full h-48 sm:h-64 relative">
@@ -132,7 +119,6 @@ votes: {
               <span className="bg-white/20 text-white font-extrabold text-xs uppercase tracking-wider px-3 py-1 rounded-full backdrop-blur-sm shadow-sm">
                 {poll.category}
               </span>
-              {/* Closing badge */}
               {closingInfo && (
                 <span
                   className={`font-extrabold text-xs px-3 py-1 rounded-full flex items-center gap-1 backdrop-blur-sm shadow-sm ${
@@ -153,7 +139,6 @@ votes: {
           </div>
         </div>
 
-        {/* Info badges */}
         <div className="px-6 py-4 bg-slate-50 dark:bg-zinc-800/50 border-b border-slate-100 dark:border-zinc-800 flex flex-wrap gap-4 text-xs font-semibold text-slate-500 dark:text-zinc-400 sm:px-8">
           <div className="flex items-center space-x-1">
             <User className="h-3.5 w-3.5 text-indigo-500" />
@@ -168,10 +153,8 @@ votes: {
               <MessageCircle className="h-3.5 w-3.5 text-emerald-500" />
               <span>{totalVoters} {totalVoters === 1 ? "voter" : "voters"}</span>
             </div>
-            {/* Share button (Modal with QR Code) */}
             <SharePollModal pollId={poll.id} pollTitle={poll.question} />
-            
-            {/* Presenter Mode and CSV download — creator only */}
+
             {isCreator && (
               <>
                 <PresenterMode 
@@ -196,7 +179,6 @@ votes: {
         </div>
 
         <div className="p-6 sm:p-8 space-y-6">
-          {/* Creator admin panel */}
           {isCreator && (
             <PollAdminPanel
               pollId={poll.id}
@@ -207,27 +189,26 @@ votes: {
             />
           )}
 
-          {/* Voting / results section */}
           {!session ? (
             <div className="space-y-6">
               <div className="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-2xl text-sm font-semibold">
                 🔒 Cast your vote! Please sign in using the dashboard or homepage to participate in this poll.
               </div>
-                            <PollResults options={optionsResults} totalVotes={totalVotes} ageData={ageData} regionData={regionData} trendData={trendData} />
+              <PollResults {...resultProps} />
             </div>
           ) : isClosed ? (
             <div className="space-y-4">
               <div className="bg-red-50 border border-red-200 text-red-800 p-4 rounded-2xl text-sm font-bold flex items-center space-x-2">
                 <span>🔒 This poll has closed. Here are the final results.</span>
               </div>
-                            <PollResults options={optionsResults} totalVotes={totalVotes} ageData={ageData} regionData={regionData} trendData={trendData} />
+              <PollResults {...resultProps} />
             </div>
           ) : hasVoted ? (
             <div className="space-y-4">
               <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-2xl text-sm font-bold flex items-center space-x-2">
                 <span>✅ You voted on this poll! Here are the live results.</span>
               </div>
-                            <PollResults options={optionsResults} totalVotes={totalVotes} ageData={ageData} regionData={regionData} trendData={trendData} />
+              <PollResults {...resultProps} />
             </div>
           ) : !isProfileComplete ? (
             <div className="space-y-6">
@@ -243,7 +224,7 @@ votes: {
                   </Link>
                 </div>
               </div>
-                            <PollResults options={optionsResults} totalVotes={totalVotes} ageData={ageData} regionData={regionData} trendData={trendData} />
+              <PollResults {...resultProps} />
             </div>
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -270,12 +251,11 @@ votes: {
                   <span>Current Demographics</span>
                 </h2>
                 <p className="text-xs text-slate-400">Vote to view full breakdowns.</p>
-                <PollResults options={optionsResults} totalVotes={totalVotes} ageData={ageData} regionData={regionData} trendData={trendData} />
+                <PollResults {...resultProps} />
               </div>
             </div>
           )}
 
-          {/* Comments section */}
           <CommentsSection
             pollId={poll.id}
             initialComments={poll.comments.map((c): CommentData => ({

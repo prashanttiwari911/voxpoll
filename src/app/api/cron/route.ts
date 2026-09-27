@@ -13,7 +13,7 @@ export async function GET(req: Request) {
 
     const now = new Date();
 
-    const result = await db.poll.updateMany({
+    const publishResult = await db.poll.updateMany({
       where: {
         status: "DRAFT",
         scheduledAt: { lte: now },
@@ -24,9 +24,19 @@ export async function GET(req: Request) {
       },
     });
 
+    const closeResult = await db.poll.updateMany({
+      where: {
+        status: "PUBLISHED",
+        closesAt: { lte: now },
+      },
+      data: {
+        status: "CLOSED",
+      },
+    });
+
     return NextResponse.json({
       success: true,
-      message: `Successfully published ${result.count} scheduled polls.`,
+      message: `Successfully published ${publishResult.count} scheduled polls and closed ${closeResult.count} expired polls.`,
     });
   } catch (error) {
     console.error("Cron Error:", error);

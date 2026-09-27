@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Link2, CheckCheck, Share2, X, QrCode } from "lucide-react";
+import { Link2, CheckCheck, Share2, X, QrCode, Check, Copy } from "lucide-react";
 import QRCode from "react-qr-code";
 
 import { toast } from "sonner";
@@ -37,6 +37,22 @@ export default function SharePollModal({ pollId, pollTitle = "Vote on this poll!
       setCopied(true);
       toast.success("Link copied to clipboard!");
       setTimeout(() => setCopied(false), 2500);
+    }
+  };
+
+  const handleNativeShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: pollTitle,
+          text: 'Vote on my poll: ' + pollTitle,
+          url: url,
+        });
+      } catch (err) {
+        console.error('Error sharing:', err);
+      }
+    } else {
+      toast.error('Native sharing not supported on this device');
     }
   };
 
@@ -156,16 +172,20 @@ export default function SharePollModal({ pollId, pollTitle = "Vote on this poll!
                       value={url}
                       className="flex-1 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs font-medium text-zinc-600 dark:text-zinc-300 outline-none"
                     />
-                    <button
-                      onClick={handleCopy}
-                      className={`inline-flex items-center justify-center p-2 rounded-xl border transition-all shrink-0 ${
-                        copied
-                          ? "bg-emerald-50 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400"
-                          : "bg-zinc-900 dark:bg-zinc-100 border-zinc-900 dark:border-zinc-100 text-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-white"
-                      }`}
-                    >
-                      {copied ? <CheckCheck className="h-4 w-4" /> : <Link2 className="h-4 w-4" />}
-                    </button>
+                                      <button
+                    onClick={handleCopy}
+                    className="flex-shrink-0 bg-indigo-600 hover:bg-indigo-700 text-white p-3 rounded-xl transition-colors"
+                    title="Copy Link"
+                  >
+                    {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                  </button>
+                  <button
+                    onClick={handleNativeShare}
+                    className="flex-shrink-0 bg-zinc-900 dark:bg-zinc-100 hover:bg-zinc-800 dark:hover:bg-white text-white dark:text-zinc-900 p-3 rounded-xl transition-colors"
+                    title="Share via device"
+                  >
+                    <Share2 className="h-4 w-4" />
+                  </button>
                   </div>
                 </div>
               </div>

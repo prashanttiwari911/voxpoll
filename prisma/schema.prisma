@@ -66,6 +66,7 @@ model VerificationToken {
 
 model User {
   id            String    @id @default(cuid())
+  deletedAt     DateTime?
   name          String?
   email         String?   @unique
   emailVerified DateTime?
@@ -80,8 +81,7 @@ model User {
   // Role: "USER" | "ADMIN" | "MODERATOR"
   role String @default("USER")
 
-  deletedAt DateTime?
-
+  
   // Relations
   accounts      Account[]
   sessions      Session[]
@@ -110,6 +110,7 @@ model Tag {
 
 model Poll {
   id          String    @id @default(cuid())
+  deletedAt     DateTime?
   question    String
   description String?
   category    String    // "EDUCATION" | "SPORTS" | "POLITICS" | "BOOKS" | "TECHNOLOGY" | "HEALTH" | "OTHER"
@@ -129,8 +130,7 @@ model Poll {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   creatorId String
-  deletedAt DateTime?
-  creator   User      @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+    creator   User      @relation(fields: [creatorId], references: [id], onDelete: Cascade)
 
   options       Option[]
   votes         Vote[]

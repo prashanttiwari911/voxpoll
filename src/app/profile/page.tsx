@@ -33,6 +33,8 @@ export default async function ProfilePage() {
     email: user?.email || "",
     age: user?.age || null,
     address: user?.address || "",
+    gender: user?.gender || "",
+    occupation: user?.occupation || "",
   };
 
   const isProfileIncomplete = !userData.age || !userData.address;

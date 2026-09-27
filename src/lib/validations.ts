@@ -36,28 +36,11 @@ export const VALID_NOTIFICATION_TYPES = [
 // User / Profile
 // ---------------------------------------------------------------------------
 export const profileSchema = z.object({
-  name: z
-    .string()
-    .min(1, "Name is required.")
-    .max(100, "Name must be 100 characters or fewer.")
-    .regex(
-      /^[\p{L}\p{M} '.,\-]{1,100}$/u,
-      "Name may only contain letters, spaces, apostrophes, hyphens, and dots."
-    )
-    .optional()
-    .or(z.literal("")),
-  age: z
-    .number({ message: "Age must be a number." })
-    .int("Age must be a whole number.")
-    .min(1, "Age must be at least 1.")
-    .max(120, "Age must be 120 or fewer.")
-    .nullable()
-    .optional(),
-  address: z
-    .string()
-    .max(200, "Address must be 200 characters or fewer.")
-    .nullable()
-    .optional(),
+  name: z.string().min(2, "Name must be at least 2 characters").max(50, "Name too long").optional(),
+  age: z.number().min(13, "Must be at least 13").max(120, "Invalid age").nullable().optional(),
+  address: z.string().max(100, "Address too long").nullable().optional(),
+  gender: z.string().nullable().optional(),
+  occupation: z.string().max(100, "Occupation too long").nullable().optional(),
 });
 
 export type ProfileInput = z.infer<typeof profileSchema>;

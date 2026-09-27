@@ -82,6 +82,8 @@ export async function updateProfile(_prevState: unknown, formData: FormData) {
       name: (formData.get("name") as string)?.trim() || undefined,
       age: formData.get("age") ? Number(formData.get("age")) : null,
       address: (formData.get("address") as string)?.trim() || null,
+      gender: (formData.get("gender") as string)?.trim() || null,
+      occupation: (formData.get("occupation") as string)?.trim() || null,
     };
 
     const parsed = profileSchema.safeParse(raw);
@@ -95,7 +97,8 @@ export async function updateProfile(_prevState: unknown, formData: FormData) {
         name: parsed.data.name || user.name || undefined,
         age: parsed.data.age ?? null,
         address: parsed.data.address ?? null,
-      },
+        gender: parsed.data.gender ?? null,
+        occupation: parsed.data.occupation ?? null,},
     });
 
     await writeAuditLog({ userId: user.id, action: "UPDATE_PROFILE", entity: "User", entityId: user.id });

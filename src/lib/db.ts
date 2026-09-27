@@ -16,6 +16,51 @@ const adapter = new PrismaPg(pool);
 
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
-export const db = globalForPrisma.prisma || new PrismaClient({ adapter });
+const baseClient = globalForPrisma.prisma || new PrismaClient({ adapter });
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = db;
+export const db = baseClient.$extends({
+  query: {
+    poll: {
+      async $allOperations({ operation, args, query }) {
+        if (operation === 'delete') {
+          return baseClient.poll.update({
+            where: args.where,
+            data: { deletedAt: new Date() },
+          });
+        }
+        if (operation === 'deleteMany') {
+          return baseClient.poll.updateMany({
+            where: args.where,
+            data: { deletedAt: new Date() },
+          });
+        }
+        if (['findUnique', 'findFirst', 'findMany', 'count'].includes(operation)) {
+          (args as any).where = { ...(args as any).where, deletedAt: null };
+        }
+        return query(args);
+      },
+    },
+    user: {
+      async $allOperations({ operation, args, query }) {
+        if (operation === 'delete') {
+          return baseClient.user.update({
+            where: args.where,
+            data: { deletedAt: new Date() },
+          });
+        }
+        if (operation === 'deleteMany') {
+          return baseClient.user.updateMany({
+            where: args.where,
+            data: { deletedAt: new Date() },
+          });
+        }
+        if (['findUnique', 'findFirst', 'findMany', 'count'].includes(operation)) {
+          (args as any).where = { ...(args as any).where, deletedAt: null };
+        }
+        return query(args);
+      },
+    }
+  }
+}) as unknown as PrismaClient;
+
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = baseClient;

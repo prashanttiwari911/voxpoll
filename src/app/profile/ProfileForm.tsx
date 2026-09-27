@@ -13,6 +13,8 @@ interface ProfileFormProps {
     email: string;
     age: number | null;
     address: string | null;
+    gender: string | null;
+    occupation: string | null;
   };
 }
 
@@ -21,6 +23,8 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
   const [name, setName] = useState(initialData.name || "");
   const [age, setAge] = useState(initialData.age ? String(initialData.age) : "");
   const [address, setAddress] = useState(initialData.address || "");
+  const [gender, setGender] = useState(initialData.gender || "");
+  const [occupation, setOccupation] = useState(initialData.occupation || "");
   
   const [loading, setLoading] = useState(false);
 
@@ -32,6 +36,8 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
     formData.append("name", name);
     formData.append("age", age);
     formData.append("address", address);
+    formData.append("gender", gender);
+    formData.append("occupation", occupation);
 
     const result = await updateProfile(null, formData);
 
@@ -115,6 +121,41 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
             ))}
           </select>
           <p className="text-xs text-slate-400 mt-1">Required for India Map demographics.</p>
+        </div>
+      </div>
+
+      
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        {/* Gender Input */}
+        <div>
+          <label className="block text-sm font-semibold text-slate-700 mb-2">
+            Gender
+          </label>
+          <select
+            value={gender}
+            onChange={(e) => setGender(e.target.value)}
+            className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+          >
+            <option value="">Select...</option>
+            <option value="FEMALE">Female</option>
+            <option value="MALE">Male</option>
+            <option value="OTHER">Other</option>
+            <option value="PREFER_NOT_TO_SAY">Prefer not to say</option>
+          </select>
+        </div>
+
+        {/* Occupation Input */}
+        <div>
+          <label className="block text-sm font-semibold text-slate-700 mb-2">
+            Occupation
+          </label>
+          <input
+            type="text"
+            value={occupation}
+            onChange={(e) => setOccupation(e.target.value)}
+            placeholder="e.g. Student, Software Engineer"
+            className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+          />
         </div>
       </div>
 
