@@ -8,15 +8,14 @@ import type { OptionResult } from "./PollResults";
 interface PresenterModeProps {
   pollId: string;
   question: string;
-  shortCode?: string | null;
   totalVotes: number;
   options: OptionResult[];
 }
 
-export default function PresenterMode({ pollId, question, shortCode, totalVotes, options }: PresenterModeProps) {
+export default function PresenterMode({ pollId, question, totalVotes, options }: PresenterModeProps) {
   const [isOpen, setIsOpen] = useState(false);
   const url = typeof window !== "undefined" ? `${window.location.origin}/polls/${pollId}` : "";
-  const joinUrl = typeof window !== "undefined" ? `${window.location.origin}/join` : "";
+  
 
   // Sort options by count
   const sortedOptions = [...options].sort((a, b) => b.count - a.count);
@@ -115,14 +114,7 @@ export default function PresenterMode({ pollId, question, shortCode, totalVotes,
           <h3 className="text-xl font-bold text-zinc-400 mb-8">Join the poll at</h3>
           <p className="text-3xl font-black text-indigo-400 break-all mb-8">{url.replace(/^https?:\/\//, '')}</p>
           
-          {shortCode && (
-            <>
-              <p className="text-zinc-500 font-semibold mb-2 uppercase tracking-widest text-sm">Use Code</p>
-              <div className="bg-white/10 px-8 py-4 rounded-3xl mb-12">
-                <span className="text-5xl lg:text-6xl font-black text-white tracking-widest">{shortCode.split('').join(' ')}</span>
-              </div>
-            </>
-          )}
+          
 
           <div className="p-4 bg-white rounded-3xl">
             {url && <QRCode value={url} size={200} />}

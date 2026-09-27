@@ -168,8 +168,8 @@ votes: {
               <MessageCircle className="h-3.5 w-3.5 text-emerald-500" />
               <span>{totalVoters} {totalVoters === 1 ? "voter" : "voters"}</span>
             </div>
-            {/* Share button (Modal with QR & ShortCode) */}
-            <SharePollModal pollId={poll.id} shortCode={poll.shortCode} pollTitle={poll.question} />
+            {/* Share button (Modal with QR Code) */}
+            <SharePollModal pollId={poll.id} pollTitle={poll.question} />
             
             {/* Presenter Mode and CSV download — creator only */}
             {isCreator && (
@@ -177,7 +177,6 @@ votes: {
                 <PresenterMode 
                   pollId={poll.id} 
                   question={poll.question} 
-                  shortCode={poll.shortCode} 
                   totalVotes={totalVotes} 
                   options={optionsResults} 
                 />

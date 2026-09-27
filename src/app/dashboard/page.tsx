@@ -173,8 +173,7 @@ export default async function DashboardPage() {
             {[
               { href: "/bookmarks",    label: "My Bookmarks",    icon: Bookmark },
               { href: "/notifications",label: "Notifications",   icon: MessageCircle },
-              { href: "/join",         label: "Join a Poll",     icon: Vote },
-            ].map(({ href, label, icon: Icon }) => (
+              ].map(({ href, label, icon: Icon }) => (
               <Link key={href} href={href}
                 className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-zinc-50 transition-colors text-sm font-bold text-zinc-700">
                 <Icon className="h-4 w-4 text-zinc-400" />

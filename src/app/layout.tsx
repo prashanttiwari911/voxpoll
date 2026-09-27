@@ -53,7 +53,6 @@ export default function RootLayout({
                   <h4 className="text-white font-black text-sm uppercase tracking-widest">Platform</h4>
                   <ul className="space-y-3 text-sm font-semibold">
                     <li><a href="/" className="hover:text-white transition-colors">Explore Polls</a></li>
-                    <li><a href="/join" className="hover:text-white transition-colors">Join a Poll</a></li>
                     <li><a href="/polls/new" className="hover:text-white transition-colors">Create a Poll</a></li>
                     <li><a href="/dashboard" className="hover:text-white transition-colors">My Dashboard</a></li>
                   </ul>

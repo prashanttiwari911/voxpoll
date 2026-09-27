@@ -121,9 +121,7 @@ model Poll {
   scheduledAt DateTime? // future publish date (for DRAFT → PUBLISHED transition)
   
   // Short code for joining
-  shortCode   String?   @unique
-
-  // Media & multi-choice
+// Media & multi-choice
   imageUrl       String?
   isMultipleChoice Boolean @default(false)
   maxChoices     Int     @default(1) // relevant only when isMultipleChoice = true

@@ -5,11 +5,6 @@ import { pollSchema, pollUpdateSchema, VALID_CATEGORIES } from "@/lib/validation
 import { revalidatePath } from "next/cache";
 import { getAuthenticatedUser, writeAuditLog, createNotification } from "./user";
 
-function generateShortCode(): string {
-  // Generate a random 5-digit numeric string (e.g. 10000-99999)
-  return Math.floor(10000 + Math.random() * 90000).toString();
-}
-
 // ---------------------------------------------------------------------------
 // Action: Create Poll
 // ---------------------------------------------------------------------------
@@ -66,8 +61,6 @@ export async function createPoll(
       : [];
       
     // Generate a short code that users can use to join the poll.
-    const shortCode = generateShortCode();
-
     const parsedScheduledAt = d.scheduledAt ? new Date(d.scheduledAt) : null;
     let finalStatus = d.status;
     if (parsedScheduledAt && parsedScheduledAt > new Date()) {
@@ -85,7 +78,6 @@ export async function createPoll(
         isMultipleChoice: d.isMultipleChoice,
         maxChoices: d.isMultipleChoice ? (d.maxChoices ?? 2) : 1,
         imageUrl: d.imageUrl || null,
-        shortCode,
         creatorId: user.id,
         options: {
           create: d.options.map((text) => ({ text: text.trim() })),
@@ -285,18 +277,3 @@ export async function toggleBookmark(pollId: string) {
 // ---------------------------------------------------------------------------
 // Action: Resolve Poll Code
 // ---------------------------------------------------------------------------
-export async function resolvePollCode(code: string) {
-  try {
-    const poll = await db.poll.findUnique({
-      where: { shortCode: code.trim() },
-      select: { id: true, status: true },
-    });
-
-    if (!poll) return { success: false, error: "Invalid poll code. Please check and try again." };
-    if (poll.status === "DRAFT") return { success: false, error: "This poll is not published yet." };
-
-    return { success: true, pollId: poll.id };
-  } catch (e: unknown) {
-    return { success: false, error: e instanceof Error ? e.message : "Could not resolve poll code." };
-  }
-}

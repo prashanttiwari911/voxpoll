@@ -8,11 +8,10 @@ import { toast } from "sonner";
 
 interface SharePollModalProps {
   pollId: string;
-  shortCode?: string | null;
   pollTitle?: string;
 }
 
-export default function SharePollModal({ pollId, shortCode, pollTitle = "Vote on this poll!" }: SharePollModalProps) {
+export default function SharePollModal({ pollId, pollTitle = "Vote on this poll!" }: SharePollModalProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"link" | "email">("link");
   const [emailAddresses, setEmailAddresses] = useState("");

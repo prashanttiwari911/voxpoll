@@ -10,7 +10,7 @@ import {
 const FAQS = [
   {
     question: "How do I join a poll?",
-    answer: "Click 'Join a Poll' in the navigation bar or on the homepage. Enter the 5-digit poll code provided by the presenter, then click 'Join Poll'. You'll be taken directly to the voting screen.",
+    answer: "Simply click on any direct poll link shared with you, or scan the QR code provided by the presenter. You will be taken directly to the voting screen.",
   },
   {
     question: "Do I need an account to vote?",
@@ -359,7 +359,7 @@ export default function HelpPage() {
                   title: "Quick Start",   
                   desc: "Get up and running in under 2 minutes.",            
                   color: "bg-amber-50 border-amber-100 text-amber-600",
-                  content: "To get started, simply click 'Sign In' at the top right of the page. You can create a free account or use our 1-click Demo Login. Once signed in, click 'Create Poll' to ask your first question. Share the unique 5-digit code with your audience to instantly start gathering real-time feedback!" 
+                  content: "To get started, simply click 'Sign In' at the top right of the page. You can create a free account or use our 1-click Demo Login. Once signed in, click 'Create Poll' to ask your first question. Share the direct URL link or QR code with your audience to instantly start gathering real-time feedback!" 
                 },
                 { 
                   icon: BookOpen, 
