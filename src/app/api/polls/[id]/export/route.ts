@@ -45,7 +45,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
   const csv = [
     `# VoTI Poll Export\n# Question: ${esc(poll.question)}\n# Category: ${esc(poll.category)}\n# Status: ${esc(poll.status)}\n# Created: ${esc(poll.createdAt.toISOString())}\n# Closes: ${poll.closesAt ? esc(poll.closesAt.toISOString()) : "Never"}\n# Total Votes: ${totalVoters}`,
     ...optionSummary,
-    `# Exported: ${esc(new Date().toISOString())}\n#\n` + "VoterName,Age,Region,Choice,VotedAt",
+    `# Exported: ${esc(new Date().toISOString())}\n#\n` + "Name,Age,Location,Choice,Response Time",
     ...votes.map((v) => [esc(v.user.name), esc(v.user.age), esc(v.user.address), esc(v.option.text), esc(v.createdAt.toISOString())].join(","))
   ].join("\n");
 

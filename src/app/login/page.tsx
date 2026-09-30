@@ -126,8 +126,8 @@ export default function LoginPage() {
               <div className="p-4 border-t border-amber-200/50 dark:border-amber-900/50 space-y-3 animate-in slide-in-from-top-2">
                 <p className="text-xs text-amber-700/70 dark:text-amber-500/70 font-medium pb-1">Bypass real authentication for MCA demo evaluation.</p>
                 <div className="grid grid-cols-2 gap-2">
-                  <button onClick={() => signIn("credentials", { email: "admin@voti.com", name: "Evaluator Admin", age: 35, address: "Delhi", callbackUrl: "/admin" })} className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5 transition-all shadow-sm text-xs">Demo Admin <ArrowRight className="h-3 w-3" /></button>
-                  <button onClick={() => signIn("credentials", { email: "user@voti.com", name: "Demo User", age: 24, address: "Maharashtra", callbackUrl: "/dashboard" })} className="bg-zinc-800 hover:bg-zinc-700 text-white font-bold py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5 transition-all shadow-sm text-xs">Demo User <ArrowRight className="h-3 w-3" /></button>
+                  <button onClick={() => signIn("credentials", { email: "admin@voti.com", name: "Evaluator Admin", age: 35, address: "Delhi", role: "ADMIN", callbackUrl: "/admin" })} className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5 transition-all shadow-sm text-xs">Demo Admin <ArrowRight className="h-3 w-3" /></button>
+                  <button onClick={() => signIn("credentials", { email: "user@voti.com", name: "Demo User", age: 24, address: "Maharashtra", role: "USER", callbackUrl: "/dashboard" })} className="bg-zinc-800 hover:bg-zinc-700 text-white font-bold py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5 transition-all shadow-sm text-xs">Demo User <ArrowRight className="h-3 w-3" /></button>
                 </div>
               </div>
             )}

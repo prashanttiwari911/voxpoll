@@ -42,21 +42,30 @@ export const authOptions: NextAuthOptions = {
         address: { label: "Address", type: "text" },
         gender: { label: "Gender", type: "text" },
         occupation: { label: "Occupation", type: "text" },
+        role: { label: "Role", type: "text" },
       },
       async authorize(credentials) {
         if (!credentials?.email) return null;
+        const email = credentials.email;
         const parsedAge = credentials.age && !isNaN(parseInt(credentials.age, 10)) ? parseInt(credentials.age, 10) : null;
+        const requestedRole = typeof credentials.role === "string" ? credentials.role.toUpperCase() : undefined;
+        const resolvedRole = requestedRole && ["USER", "ADMIN", "MODERATOR"].includes(requestedRole)
+          ? requestedRole
+          : email === "admin@voti.com" || email === "system@voti.com"
+            ? "ADMIN"
+            : "USER";
         
-        let user = await db.user.findUnique({ where: { email: credentials.email } });
+        let user = await db.user.findUnique({ where: { email } });
         if (!user) {
           user = await db.user.create({
             data: {
-              email: credentials.email,
+              email,
               name: credentials.name || "Demo User",
               age: parsedAge,
               address: credentials.address || "Localhost",
               gender: credentials.gender || null,
               occupation: credentials.occupation || null,
+              role: resolvedRole,
             },
           });
         } else {
@@ -68,6 +77,7 @@ export const authOptions: NextAuthOptions = {
               ...(credentials.name && { name: credentials.name }),
               ...(credentials.gender && { gender: credentials.gender }),
               ...(credentials.occupation && { occupation: credentials.occupation }),
+              ...((requestedRole || email === "admin@voti.com" || email === "system@voti.com") && { role: resolvedRole }),
             },
           });
         }

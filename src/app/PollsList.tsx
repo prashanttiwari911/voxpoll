@@ -72,9 +72,23 @@ export default function PollsList({ initialPolls }: { initialPolls: PollItem[] }
           ))}
         </div>
 
-        <div className="flex items-center gap-2 w-full md:w-auto shrink-0 border-t md:border-t-0 md:border-l border-slate-100 dark:border-zinc-800 pt-2 md:pt-0 md:pl-3">
-          <span className="text-xs font-semibold text-slate-400 dark:text-zinc-500 hidden lg:inline-block">Sort:</span>
-          <select value={filters.sort} onChange={(e) => setFilters({ ...filters, sort: e.target.value as SortKey })} className="bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-xs font-bold py-2 px-3 rounded-xl border-none focus:ring-2 focus:ring-indigo-400 outline-none w-full md:w-auto cursor-pointer">
+        <div className="flex flex-col sm:flex-row items-center gap-2 w-full md:w-auto shrink-0 border-t md:border-t-0 md:border-l border-slate-100 dark:border-zinc-800 pt-2 md:pt-0 md:pl-3">
+          <select
+            aria-label="Filter by status"
+            value={filters.status}
+            onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+            className="bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-xs font-bold py-2 px-3 rounded-xl border-none focus:ring-2 focus:ring-indigo-400 outline-none w-full md:w-auto cursor-pointer"
+          >
+            <option value="ALL">All statuses</option>
+            <option value="PUBLISHED">Active</option>
+            <option value="CLOSED">Closed</option>
+          </select>
+          <select
+            aria-label="Sort polls"
+            value={filters.sort}
+            onChange={(e) => setFilters({ ...filters, sort: e.target.value as SortKey })}
+            className="bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-xs font-bold py-2 px-3 rounded-xl border-none focus:ring-2 focus:ring-indigo-400 outline-none w-full md:w-auto cursor-pointer"
+          >
             <option value="newest">Newest</option>
             <option value="most_active">Most Active</option>
             <option value="closing_soon">Closing Soon</option>

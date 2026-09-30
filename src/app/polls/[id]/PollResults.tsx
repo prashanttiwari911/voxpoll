@@ -6,7 +6,7 @@ import {
   Trophy, Users, Globe, TrendingUp, PieChart as PieIcon,
   BarChart2, Sparkles, Award,
 } from "lucide-react";
-import { OverviewPieChart, AgeBarChart, TrendLineChart } from "./charts/Charts";
+import { OverviewPieChart, AgeBarChart, RegionBarChart, TrendLineChart } from "./charts/Charts";
 import dynamic from "next/dynamic";
 const IndiaMap = dynamic(() => import("./IndiaMap"), { ssr: false, loading: () => <div className="animate-pulse bg-slate-100 rounded-lg h-full w-full flex items-center justify-center"><span className="text-slate-400 font-medium text-sm">Loading Map...</span></div> });
 
@@ -179,7 +179,7 @@ export default function PollResults({
         </div>
 
         {/* Tab panels */}
-        <div className="bg-white dark:bg-zinc-900 border border-slate-100 dark:border-zinc-800 rounded-3xl p-6 shadow-sm min-h-[320px]">
+        <div className="bg-white dark:bg-zinc-900 border border-slate-100 dark:border-zinc-800 rounded-3xl p-6 shadow-sm min-h-80">
           
                     {activeTab === "pie" && (
             <div className="space-y-4">
@@ -201,6 +201,20 @@ export default function PollResults({
                         <span className="text-xs text-slate-700 font-semibold">{o.text}</span>
                       </div>
                     ))}
+                  </div>
+                  <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 border-t border-slate-100 pt-6">
+                    <div>
+                      <h4 className="text-sm font-black text-slate-700 mb-2">Votes by age group</h4>
+                      <div className="h-56 w-full text-xs">
+                        <AgeBarChart ageData={ageData} options={options} />
+                      </div>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-black text-slate-700 mb-2">Votes by location</h4>
+                      <div className="h-56 w-full text-xs">
+                        <RegionBarChart regionData={regionData} />
+                      </div>
+                    </div>
                   </div>
                 </>
               )}

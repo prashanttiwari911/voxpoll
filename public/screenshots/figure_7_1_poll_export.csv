@@ -1,0 +1,21 @@
+# VoTI Poll Export
+# Question: Which community improvement matters most?
+# Category: OTHER
+# Status: PUBLISHED
+# Created: 2026-09-30T17:01:22.309Z
+# Closes: Never
+# Total Votes: 8
+# Public transport: 3 votes (37.5%)
+# Healthcare access: 3 votes (37.5%)
+# Digital services: 2 votes (25.0%)
+# Exported: 2026-09-30T17:01:45.222Z
+#
+Name,Age,Location,Choice,Response Time
+Aarav Mehta,19,Delhi,Public transport,2026-09-30T16:53:23.819Z
+Diya Sharma,31,Maharashtra,Healthcare access,2026-09-30T16:54:23.819Z
+Kabir Rao,52,Karnataka,Digital services,2026-09-30T16:55:23.819Z
+Anaya Iyer,27,Tamil Nadu,Public transport,2026-09-30T16:56:23.819Z
+Ishaan Das,42,West Bengal,Healthcare access,2026-09-30T16:57:23.819Z
+Meera Nair,63,Kerala,Digital services,2026-09-30T16:58:23.819Z
+Rohan Singh,23,Delhi,Public transport,2026-09-30T16:59:23.819Z
+Sara Khan,36,Maharashtra,Healthcare access,2026-09-30T17:00:23.819Z
