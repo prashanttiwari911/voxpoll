@@ -1,12 +1,9 @@
 "use client";
-
 import { useState } from "react";
 import {
   HelpCircle, MessageSquare, Mail, Send, ChevronDown, ChevronUp,
   CheckCircle, BookOpen, Zap, Shield, LifeBuoy, Star, AlertCircle, PhoneCall,
 } from "lucide-react";
-
-// ── FAQ Data ──────────────────────────────────────────────────────────────────
 const FAQS = [
   {
     question: "How do I join a poll?",
@@ -41,8 +38,6 @@ const FAQS = [
     answer: "Yes. Votes are stored and shown in aggregate only. The poll creator can never see who voted for which option — only the totals and anonymous demographic breakdowns.",
   },
 ];
-
-// ── Contact Methods ────────────────────────────────────────────────────────────
 const CONTACT_METHODS = [
   {
     icon: Mail,
@@ -72,8 +67,6 @@ const CONTACT_METHODS = [
     actionLabel: "Start Chat",
   },
 ];
-
-// ── FAQ Accordion Item ─────────────────────────────────────────────────────────
 function FAQItem({ question, answer }: { question: string; answer: string }) {
   const [open, setOpen] = useState(false);
   return (
@@ -96,8 +89,6 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
     </div>
   );
 }
-
-// ── Feedback Form ──────────────────────────────────────────────────────────────
 function FeedbackForm() {
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
@@ -106,7 +97,6 @@ function FeedbackForm() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!message.trim()) return;
@@ -116,7 +106,6 @@ function FeedbackForm() {
       setSubmitting(false);
     }, 1200);
   };
-
   if (submitted) {
     return (
       <div className="text-center py-16 px-4 space-y-4">
@@ -134,7 +123,6 @@ function FeedbackForm() {
       </div>
     );
   }
-
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl mx-auto">
       {/* Star Rating */}
@@ -161,7 +149,6 @@ function FeedbackForm() {
           ))}
         </div>
       </div>
-
       {/* Feedback Type */}
       <div>
         <label className="block text-sm font-black text-zinc-800 mb-3">Type of feedback</label>
@@ -187,7 +174,6 @@ function FeedbackForm() {
           ))}
         </div>
       </div>
-
       {/* Message */}
       <div>
         <label className="block text-sm font-black text-zinc-800 mb-2">Your message <span className="text-red-500">*</span></label>
@@ -201,7 +187,6 @@ function FeedbackForm() {
         />
         <p className="text-xs text-zinc-400 mt-1 text-right">{message.length}/1000</p>
       </div>
-
       {/* Email */}
       <div>
         <label className="block text-sm font-black text-zinc-800 mb-2">Email <span className="text-zinc-400 font-normal">(optional, for follow-up)</span></label>
@@ -213,7 +198,6 @@ function FeedbackForm() {
           className="w-full px-4 py-3 rounded-2xl border-2 border-zinc-200 focus:outline-none focus:border-indigo-500 transition-all text-zinc-800 font-medium"
         />
       </div>
-
       <button
         type="submit"
         disabled={submitting || !message.trim()}
@@ -231,8 +215,6 @@ function FeedbackForm() {
     </form>
   );
 }
-
-// ── Contact Form ──────────────────────────────────────────────────────────────
 function ContactForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -240,13 +222,11 @@ function ContactForm() {
   const [message, setMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
     setTimeout(() => { setSubmitted(true); setSubmitting(false); }, 1200);
   };
-
   if (submitted) {
     return (
       <div className="text-center py-16 space-y-4">
@@ -259,7 +239,6 @@ function ContactForm() {
       </div>
     );
   }
-
   return (
     <form onSubmit={handleSubmit} className="space-y-5 max-w-2xl mx-auto">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -291,20 +270,15 @@ function ContactForm() {
     </form>
   );
 }
-
-// ── Main Page ─────────────────────────────────────────────────────────────────
 type TabKey = "help" | "contact" | "feedback";
-
 const TABS: { key: TabKey; label: string; icon: React.ElementType }[] = [
   { key: "help",     label: "Help Center", icon: HelpCircle },
   { key: "contact",  label: "Contact Us",  icon: Mail },
   { key: "feedback", label: "Feedback",    icon: MessageSquare },
 ];
-
 export default function HelpPage() {
   const [activeTab, setActiveTab] = useState<TabKey>("help");
   const [expandedCard, setExpandedCard] = useState<string | null>(null);
-
   return (
     <div className="flex-1 flex flex-col bg-white">
       {/* Hero Banner */}
@@ -321,7 +295,6 @@ export default function HelpPage() {
           <p className="text-xl text-zinc-300 font-medium">Find answers, get support, or share your thoughts with us.</p>
         </div>
       </section>
-
       {/* Tab Navigation */}
       <div className="border-b border-zinc-200 bg-white sticky top-16 z-40">
         <div className="max-w-5xl mx-auto px-4 flex gap-0">
@@ -344,10 +317,8 @@ export default function HelpPage() {
           })}
         </div>
       </div>
-
       {/* Tab Content */}
       <div className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 py-12">
-
         {/* ── Help Center ── */}
         {activeTab === "help" && (
           <div className="space-y-12">
@@ -401,7 +372,6 @@ export default function HelpPage() {
                 );
               })}
             </div>
-
             {/* FAQ */}
             <div>
               <h2 className="text-2xl font-black text-zinc-900 mb-6 flex items-center gap-2">
@@ -415,7 +385,6 @@ export default function HelpPage() {
             </div>
           </div>
         )}
-
         {/* ── Contact Us ── */}
         {activeTab === "contact" && (
           <div className="space-y-12">
@@ -440,7 +409,6 @@ export default function HelpPage() {
                 );
               })}
             </div>
-
             {/* Contact Form */}
             <div>
               <h2 className="text-2xl font-black text-zinc-900 mb-8 flex items-center gap-2">
@@ -450,7 +418,6 @@ export default function HelpPage() {
             </div>
           </div>
         )}
-
         {/* ── Feedback ── */}
         {activeTab === "feedback" && (
           <div className="space-y-8">

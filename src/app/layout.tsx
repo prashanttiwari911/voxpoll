@@ -5,14 +5,11 @@ import Navbar from "@/components/Navbar";
 import { Providers } from "@/components/Providers";
 import SessionTimeout from "@/components/SessionTimeout";
 import { Toaster } from "sonner";
-
 const fontJakarta = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-jakarta-sans" });
-
 export const metadata: Metadata = {
   title: "VoTI 🗳️ | Joyful Online Polling & Real-time Analytics",
   description: "Create interactive polls, cast your vote, and analyze real-time demographics including age and location. Simple, joyful, and user-friendly!",
 };
-
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${fontJakarta.variable} h-full antialiased`} suppressHydrationWarning>

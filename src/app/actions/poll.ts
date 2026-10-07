@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { pollSchema, pollUpdateSchema, VALID_CATEGORIES } from "@/lib/validations";
+import { pollSchema, pollUpdateSchema } from "@/lib/validations";
 import { revalidatePath } from "next/cache";
 import { getAuthenticatedUser, writeAuditLog } from "./user";
 
@@ -50,7 +50,6 @@ export async function updatePoll(pollId: string, data: Record<string, unknown>) 
   try {
     const user = await getAuthenticatedUser();
     const poll = await db.poll.findUnique({ where: { id: pollId }, include: { _count: { select: { votes: true } } } });
-    
     if (!poll) return { success: false, error: "Poll not found." };
     if (poll.creatorId !== user.id) return { success: false, error: "You are not allowed to edit this poll." };
     if (poll._count.votes > 0) return { success: false, error: "Cannot edit a poll that already has votes. This protects data integrity." };
@@ -82,14 +81,12 @@ export async function publishPoll(pollId: string) {
   try {
     const user = await getAuthenticatedUser();
     const poll = await db.poll.findUnique({ where: { id: pollId } });
-    
     if (!poll) return { success: false, error: "Poll not found." };
     if (poll.creatorId !== user.id) return { success: false, error: "Only the creator can publish this poll." };
     if (poll.status === "PUBLISHED") return { success: false, error: "Poll is already published." };
 
     await db.poll.update({ where: { id: pollId }, data: { status: "PUBLISHED", scheduledAt: null } });
     await writeAuditLog({ userId: user.id, action: "PUBLISH_POLL", entity: "Poll", entityId: pollId });
-    
     revalidatePath(`/polls/${pollId}`);
     revalidatePath("/");
     return { success: true, message: "Poll published! 🚀" };
@@ -102,7 +99,6 @@ export async function closePoll(pollId: string) {
   try {
     const user = await getAuthenticatedUser();
     const poll = await db.poll.findUnique({ where: { id: pollId } });
-    
     if (!poll) return { success: false, error: "Poll not found." };
     if (poll.creatorId !== user.id) return { success: false, error: "Only the creator can close this poll." };
     if (poll.status === "CLOSED") return { success: false, error: "Poll is already closed." };
@@ -124,7 +120,6 @@ export async function duplicatePoll(pollId: string) {
     const original = await db.poll.findUnique({ where: { id: pollId }, include: { options: true, tags: true } });
     
     if (!original) return { success: false, error: "Poll not found." };
-
     const copy = await db.poll.create({
       data: {
         question: `${original.question} (copy)`,
@@ -155,12 +150,10 @@ export async function deletePoll(pollId: string) {
   try {
     const user = await getAuthenticatedUser();
     const poll = await db.poll.findUnique({ where: { id: pollId } });
-    
     if (!poll) return { success: false, error: "Poll not found." };
     if (poll.creatorId !== user.id && user.role !== "ADMIN" && user.role !== "MODERATOR") {
       return { success: false, error: "You are not allowed to delete this poll." };
     }
-
     await db.poll.update({ where: { id: pollId }, data: { deletedAt: new Date() } });
     await writeAuditLog({ userId: user.id, action: "SOFT_DELETE_POLL", entity: "Poll", entityId: pollId });
     
@@ -176,18 +169,11 @@ export async function toggleBookmark(pollId: string) {
   try {
     const user = await getAuthenticatedUser();
     const existing = await db.bookmark.findUnique({ where: { userId_pollId: { userId: user.id, pollId } } });
-
-    if (existing) {
-      await db.bookmark.delete({ where: { userId_pollId: { userId: user.id, pollId } } });
-      revalidatePath(`/polls/${pollId}`);
-      revalidatePath("/bookmarks");
-      return { success: true, bookmarked: false, message: "Bookmark removed." };
-    }
-
-    await db.bookmark.create({ data: { userId: user.id, pollId } });
+    if (existing) await db.bookmark.delete({ where: { userId_pollId: { userId: user.id, pollId } } });
+    else await db.bookmark.create({ data: { userId: user.id, pollId } });
     revalidatePath(`/polls/${pollId}`);
     revalidatePath("/bookmarks");
-    return { success: true, bookmarked: true, message: "Poll bookmarked! 🔖" };
+    return { success: true, bookmarked: !existing, message: existing ? "Bookmark removed." : "Poll bookmarked! 🔖" };
   } catch (e: any) {
     return { success: false, error: e.message || "Could not update bookmark." };
   }

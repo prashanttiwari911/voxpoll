@@ -57,7 +57,7 @@ export default function SessionTimeout() {
   if (!showWarning || status !== "authenticated") return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-100 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4 animate-in fade-in duration-200">
       <div className="bg-white rounded-3xl shadow-2xl p-6 max-w-sm w-full text-center space-y-4 animate-in zoom-in-95 duration-200">
         <div className="flex justify-center">
           <div className="h-12 w-12 rounded-full bg-amber-100 flex items-center justify-center">

@@ -6,7 +6,6 @@ import { User, PlusCircle, BarChart2, Bookmark, MessageCircle, ArrowRight, Vote,
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
-
   if (!session?.user?.email) {
     return (
       <div className="max-w-md mx-auto my-16 px-4 py-8 bg-white border border-indigo-50 rounded-3xl shadow-xl text-center">
@@ -16,7 +15,6 @@ export default async function DashboardPage() {
       </div>
     );
   }
-
   const user = await db.user.findUnique({
     where: { email: session.user.email },
     include: {
@@ -27,7 +25,6 @@ export default async function DashboardPage() {
       notifications: { orderBy: { createdAt: "desc" }, take: 6, select: { id: true, type: true, message: true, isRead: true, createdAt: true, pollId: true } },
     },
   });
-
   if (!user) return <div className="text-center py-12">Session error. Please sign out and back in.</div>;
 
   const STATUS_BADGE: Record<string, { label: string; cls: string }> = {
@@ -35,7 +32,6 @@ export default async function DashboardPage() {
     DRAFT:     { label: "Draft",   cls: "bg-zinc-100 text-zinc-500" },
     CLOSED:    { label: "Closed",  cls: "bg-red-100 text-red-600" },
   };
-
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       <div className="bg-linear-to-r from-indigo-600 via-violet-600 to-purple-600 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
@@ -49,12 +45,10 @@ export default async function DashboardPage() {
             </div>
           </div>
           <div className="flex gap-3 shrink-0">
-            <Link href="/polls/new" className="bg-white text-indigo-700 hover:bg-indigo-50 font-bold px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm shadow-md transition-all"><PlusCircle className="h-4 w-4" /> New Poll</Link>
-            <Link href="/profile" className="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm transition-all"><User className="h-4 w-4" /> Profile</Link>
+            <Link href="/polls/new" className="bg-white text-indigo-700 hover:bg-indigo-50 font-bold px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm shadow-md transition-all"><PlusCircle className="h-4 w-4" /> New Poll</Link><Link href="/profile" className="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm transition-all"><User className="h-4 w-4" /> Profile</Link>
           </div>
         </div>
       </div>
-
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
           { icon: BarChart2, label: "Polls Created", value: user.polls.length, color: "text-indigo-600", bg: "bg-indigo-50", border: "border-indigo-100" },
@@ -68,7 +62,6 @@ export default async function DashboardPage() {
           </div>
         ))}
       </div>
-
       {(!user.age || !user.address) && (
         <div className="flex items-start gap-3 bg-amber-50 border-2 border-amber-200 text-amber-800 p-4 rounded-2xl">
           <AlertTriangle className="h-5 w-5 shrink-0 mt-0.5 text-amber-500" />
@@ -76,7 +69,6 @@ export default async function DashboardPage() {
           <Link href="/profile" className="ml-auto shrink-0 text-xs font-black text-amber-700 hover:underline">Fix now →</Link>
         </div>
       )}
-
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="space-y-6">
           <div className="bg-white border border-zinc-200 rounded-3xl p-6 shadow-sm space-y-5">

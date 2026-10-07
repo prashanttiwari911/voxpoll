@@ -41,7 +41,7 @@ export default async function NotificationsPage() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="relative">
-              <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-md"><Bell className="h-5 w-5 text-white" /></div>
+              <div className="h-10 w-10 rounded-2xl bg-linear-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-md"><Bell className="h-5 w-5 text-white" /></div>
               {unreadIds.length > 0 && <span className="absolute -top-1 -right-1 h-4 w-4 bg-rose-500 text-white text-[9px] font-black rounded-full flex items-center justify-center">{unreadIds.length > 9 ? "9+" : unreadIds.length}</span>}
             </div>
             <div><h1 className="text-2xl font-black text-slate-800">Notifications</h1><p className="text-sm text-slate-400">{notifications.length} total</p></div>

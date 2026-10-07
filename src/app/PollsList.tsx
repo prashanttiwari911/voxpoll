@@ -3,9 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { Search, ArrowRight, BookOpen, GraduationCap, Trophy, Gavel, HelpCircle, Laptop, HeartPulse, X, Users, Clock } from "lucide-react";
-
 interface Option { id: string; text: string }
-
 interface PollItem {
   id: string;
   question: string;
@@ -18,7 +16,6 @@ interface PollItem {
   options: Option[];
   _count: { votes: number };
 }
-
 const CATEGORY_MAP: Record<string, { label: string; icon: React.ElementType; color: string; bg: string }> = {
   EDUCATION:  { label: "Education",  icon: GraduationCap, color: "text-indigo-600",  bg: "bg-indigo-50 border-indigo-100" },
   SPORTS:     { label: "Sports",     icon: Trophy,        color: "text-amber-600",   bg: "bg-amber-50 border-amber-100" },
@@ -28,9 +25,7 @@ const CATEGORY_MAP: Record<string, { label: string; icon: React.ElementType; col
   HEALTH:     { label: "Health",     icon: HeartPulse,    color: "text-pink-600",    bg: "bg-pink-50 border-pink-100" },
   OTHER:      { label: "Other",      icon: HelpCircle,    color: "text-slate-600",   bg: "bg-slate-50 border-slate-100" },
 };
-
 type SortKey = "newest" | "most_active" | "closing_soon";
-
 function isPollClosed(poll: PollItem): boolean {
   if (poll.status === "CLOSED") return true;
   return poll.closesAt ? new Date(poll.closesAt) <= new Date() : false;
@@ -38,11 +33,8 @@ function isPollClosed(poll: PollItem): boolean {
 
 export default function PollsList({ initialPolls }: { initialPolls: PollItem[] }) {
   const [filters, setFilters] = useState({ search: "", category: "ALL", status: "ALL", sort: "newest" as SortKey });
-
   const hasActiveFilters = filters.search !== "" || filters.category !== "ALL" || filters.status !== "ALL" || filters.sort !== "newest";
-
   const clearFilters = () => setFilters({ search: "", category: "ALL", status: "ALL", sort: "newest" });
-
   const filtered = useMemo(() => initialPolls.filter((poll) => {
     const q = filters.search.toLowerCase();
     return (!q || poll.question.toLowerCase().includes(q) || (poll.description?.toLowerCase().includes(q) ?? false)) &&
@@ -64,45 +56,31 @@ export default function PollsList({ initialPolls }: { initialPolls: PollItem[] }
           <input type="text" value={filters.search} onChange={(e) => setFilters({ ...filters, search: e.target.value })} placeholder="Search polls…" className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 dark:border-zinc-800 focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm text-slate-800 dark:text-zinc-100 transition-all bg-slate-50 dark:bg-zinc-950 focus:bg-white dark:focus:bg-zinc-900" />
           {filters.search && <button onClick={() => setFilters({ ...filters, search: "" })} className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-zinc-300"><X className="h-4 w-4" /></button>}
         </div>
-
         <div className="flex-1 w-full overflow-x-auto no-scrollbar flex items-center gap-1.5 pb-1 md:pb-0">
           <button onClick={() => setFilters({ ...filters, category: "ALL" })} className={`py-1.5 px-3 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${filters.category === "ALL" ? "bg-slate-800 dark:bg-zinc-100 text-white dark:text-zinc-900" : "bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400 hover:bg-slate-200 dark:hover:bg-zinc-700"}`}>All Categories</button>
           {Object.entries(CATEGORY_MAP).map(([key, val]) => (
             <button key={key} onClick={() => setFilters({ ...filters, category: key })} className={`py-1.5 px-3 rounded-lg text-xs font-bold whitespace-nowrap flex items-center gap-1.5 transition-all ${filters.category === key ? "bg-indigo-600 text-white" : "bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400 hover:bg-slate-200 dark:hover:bg-zinc-700"}`}>{val.label}</button>
           ))}
         </div>
-
         <div className="flex flex-col sm:flex-row items-center gap-2 w-full md:w-auto shrink-0 border-t md:border-t-0 md:border-l border-slate-100 dark:border-zinc-800 pt-2 md:pt-0 md:pl-3">
-          <select
-            aria-label="Filter by status"
-            value={filters.status}
-            onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-            className="bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-xs font-bold py-2 px-3 rounded-xl border-none focus:ring-2 focus:ring-indigo-400 outline-none w-full md:w-auto cursor-pointer"
-          >
+          <select aria-label="Filter by status" value={filters.status} onChange={(e) => setFilters({ ...filters, status: e.target.value })} className="bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-xs font-bold py-2 px-3 rounded-xl border-none focus:ring-2 focus:ring-indigo-400 outline-none w-full md:w-auto cursor-pointer">
             <option value="ALL">All statuses</option>
             <option value="PUBLISHED">Active</option>
             <option value="CLOSED">Closed</option>
           </select>
-          <select
-            aria-label="Sort polls"
-            value={filters.sort}
-            onChange={(e) => setFilters({ ...filters, sort: e.target.value as SortKey })}
-            className="bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-xs font-bold py-2 px-3 rounded-xl border-none focus:ring-2 focus:ring-indigo-400 outline-none w-full md:w-auto cursor-pointer"
-          >
+          <select aria-label="Sort polls" value={filters.sort} onChange={(e) => setFilters({ ...filters, sort: e.target.value as SortKey })} className="bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-xs font-bold py-2 px-3 rounded-xl border-none focus:ring-2 focus:ring-indigo-400 outline-none w-full md:w-auto cursor-pointer">
             <option value="newest">Newest</option>
             <option value="most_active">Most Active</option>
             <option value="closing_soon">Closing Soon</option>
           </select>
         </div>
       </div>
-
       {hasActiveFilters && (
         <div className="flex justify-between items-center text-xs px-2">
           <span className="text-slate-500 font-medium">Found {sorted.length} {sorted.length === 1 ? 'poll' : 'polls'}</span>
           <button onClick={clearFilters} className="text-indigo-600 font-bold hover:underline flex items-center gap-1"><X className="h-3 w-3" /> Clear filters</button>
         </div>
       )}
-
       {sorted.length === 0 ? (
         <div className="text-center py-20 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-3xl shadow-sm">
           <HelpCircle className="h-12 w-12 text-slate-300 dark:text-zinc-600 mx-auto mb-4" />

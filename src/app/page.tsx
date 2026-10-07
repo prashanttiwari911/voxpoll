@@ -41,13 +41,13 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
           <div className="text-center lg:text-left space-y-8">
             <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black tracking-tighter text-zinc-900 dark:text-white leading-[1.1] drop-shadow-sm">
               YOUR VOICE.<br />
-              <span className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent drop-shadow-md">YOUR VOTE.</span>
+              <span className="bg-linear-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent drop-shadow-md">YOUR VOTE.</span>
             </h1>
             <p className="text-xl sm:text-2xl text-zinc-500 dark:text-zinc-400 max-w-xl mx-auto lg:mx-0 font-medium leading-relaxed">
               Ask questions, collect opinions, and discover what people think in real time.
             </p>
             <div className="flex flex-col sm:flex-row justify-center lg:justify-start items-center gap-4 pt-6">
-              <Link href="/polls/new" className="w-full sm:w-auto bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 hover:from-indigo-500 hover:via-purple-500 hover:to-pink-400 text-white font-black px-8 py-4 rounded-2xl flex items-center justify-center space-x-2 text-lg transition-all active:scale-95 shadow-xl shadow-indigo-500/20 hover:shadow-indigo-500/40 hover:-translate-y-1">
+              <Link href="/polls/new" className="w-full sm:w-auto bg-linear-to-r from-indigo-600 via-purple-600 to-pink-500 hover:from-indigo-500 hover:via-purple-500 hover:to-pink-400 text-white font-black px-8 py-4 rounded-2xl flex items-center justify-center space-x-2 text-lg transition-all active:scale-95 shadow-xl shadow-indigo-500/20 hover:shadow-indigo-500/40 hover:-translate-y-1">
                 <span>Create a Poll</span>
                 <ArrowRight className="h-5 w-5 ml-1" />
               </Link>
@@ -57,9 +57,9 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
             </div>
           </div>
           <div className="relative hidden md:block">
-            <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 rounded-3xl blur-3xl opacity-30 animate-pulse"></div>
+            <div className="absolute inset-0 bg-linear-to-tr from-indigo-500 via-purple-500 to-pink-500 rounded-3xl blur-3xl opacity-30 animate-pulse"></div>
             <div className="relative group perspective-1000">
-              <img src="/feature_analytics.jpg" alt="VoTI Analytics" className="relative z-10 w-full h-[500px] object-cover rounded-3xl shadow-2xl border border-white/10 dark:border-zinc-800 transform transition-all duration-700 hover:scale-[1.01] hover:shadow-[0_20px_50px_rgba(99,102,241,0.2)]" />
+              <img src="/feature_analytics.jpg" alt="VoTI Analytics" className="relative z-10 w-full h-125 object-cover rounded-3xl shadow-2xl border border-white/10 dark:border-zinc-800 transform transition-all duration-700 hover:scale-[1.01] hover:shadow-[0_20px_50px_rgba(99,102,241,0.2)]" />
             </div>
           </div>
         </div>

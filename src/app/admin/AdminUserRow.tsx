@@ -30,12 +30,10 @@ const ROLE_ICONS: Record<string, React.ReactNode> = {
   MODERATOR: <UserCheck className="h-3 w-3" />,
   USER: <User className="h-3 w-3" />,
 };
-
 export default function AdminUserRow({ user, currentUserRole, isSelf }: AdminUserRowProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
-
   const handleRoleChange = (newRole: string) => {
     setError(null);
     startTransition(async () => {
@@ -44,21 +42,15 @@ export default function AdminUserRow({ user, currentUserRole, isSelf }: AdminUse
       else router.refresh();
     });
   };
-
   return (
     <tr className="hover:bg-slate-50 transition-colors">
       <td className="px-6 py-3">
-        <div>
-          <span className="font-semibold text-slate-800">{user.name || "—"}</span>
-          <span className="block text-[11px] text-slate-400">{user.email}</span>
-          {error && <span className="block text-[11px] text-red-500 mt-0.5">{error}</span>}
-        </div>
+        <span className="font-semibold text-slate-800">{user.name || "—"}</span>
+        <span className="block text-[11px] text-slate-400">{user.email}</span>
+        {error && <span className="block text-[11px] text-red-500 mt-0.5">{error}</span>}
       </td>
       <td className="px-4 py-3">
-        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold ${ROLE_STYLES[user.role] ?? ROLE_STYLES.USER}`}>
-          {ROLE_ICONS[user.role]}
-          {user.role}
-        </span>
+        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold ${ROLE_STYLES[user.role] ?? ROLE_STYLES.USER}`}>{ROLE_ICONS[user.role]}{user.role}</span>
       </td>
       <td className="px-4 py-3 text-xs text-slate-500">
         {user.age ? `${user.age} yrs` : "—"} · {user.address || "—"}
@@ -67,12 +59,7 @@ export default function AdminUserRow({ user, currentUserRole, isSelf }: AdminUse
       <td className="px-4 py-3 text-center text-xs font-bold text-slate-600">{user._count.votes}</td>
       <td className="px-4 py-3 text-center">
         {currentUserRole === "ADMIN" && !isSelf ? (
-          <select
-            defaultValue={user.role}
-            onChange={(e) => handleRoleChange(e.target.value)}
-            disabled={isPending}
-            className="text-xs border border-slate-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-300 disabled:opacity-50 bg-white"
-          >
+          <select defaultValue={user.role} onChange={(e) => handleRoleChange(e.target.value)} disabled={isPending} className="text-xs border border-slate-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-300 disabled:opacity-50 bg-white">
             <option value="USER">USER</option>
             <option value="MODERATOR">MODERATOR</option>
             <option value="ADMIN">ADMIN</option>

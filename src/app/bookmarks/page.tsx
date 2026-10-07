@@ -19,7 +19,6 @@ export default async function BookmarksPage() {
       </div>
     );
   }
-
   const user = await db.user.findUnique({ where: { email: session.user.email }, select: { id: true } });
   if (!user) return null;
 
@@ -28,13 +27,12 @@ export default async function BookmarksPage() {
     include: { poll: { include: { creator: { select: { name: true } }, _count: { select: { votes: true, comments: true } } } } },
     orderBy: { createdAt: "desc" },
   });
-
   return (
     <div className="max-w-3xl mx-auto my-10 px-4 sm:px-6 space-y-6">
       <div>
         <Link href="/" className="inline-flex items-center space-x-1.5 text-sm font-medium text-slate-400 hover:text-indigo-600 mb-4 transition-colors"><ArrowLeft className="h-4 w-4" /><span>Back to Polls</span></Link>
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-md"><Bookmark className="h-5 w-5 text-white" /></div>
+          <div className="h-10 w-10 rounded-2xl bg-linear-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-md"><Bookmark className="h-5 w-5 text-white" /></div>
           <div><h1 className="text-2xl font-black text-slate-800">Saved Polls</h1><p className="text-sm text-slate-400">{bookmarks.length} bookmark{bookmarks.length !== 1 ? "s" : ""}</p></div>
         </div>
       </div>
@@ -53,11 +51,7 @@ export default async function BookmarksPage() {
               <div className="flex-1 min-w-0 pr-4">
                 <span className="inline-block text-[10px] font-extrabold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full mb-2">{poll.category}</span>
                 <p className="font-bold text-slate-800 group-hover:text-indigo-600 transition-colors leading-snug line-clamp-2">{poll.question}</p>
-                <div className="flex items-center gap-4 mt-2 text-[11px] font-semibold text-slate-400">
-                  <span className="flex items-center gap-1"><Users className="h-3 w-3" />{poll._count.votes} vote{poll._count.votes !== 1 ? "s" : ""}</span>
-                  <span className="flex items-center gap-1"><Calendar className="h-3 w-3" />Saved {new Date(createdAt).toLocaleDateString()}</span>
-                  {poll.creator.name && <span className="text-slate-300">by {poll.creator.name}</span>}
-                </div>
+                <div className="flex items-center gap-4 mt-2 text-[11px] font-semibold text-slate-400"><span className="flex items-center gap-1"><Users className="h-3 w-3" />{poll._count.votes} vote{poll._count.votes !== 1 ? "s" : ""}</span><span className="flex items-center gap-1"><Calendar className="h-3 w-3" />Saved {new Date(createdAt).toLocaleDateString()}</span>{poll.creator.name && <span className="text-slate-300">by {poll.creator.name}</span>}</div>
               </div>
               <ChevronRight className="h-5 w-5 text-slate-300 group-hover:text-indigo-400 shrink-0 transition-colors" />
             </Link>

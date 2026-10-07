@@ -54,7 +54,6 @@ export const authOptions: NextAuthOptions = {
           : email === "admin@voti.com" || email === "system@voti.com"
             ? "ADMIN"
             : "USER";
-        
         let user = await db.user.findUnique({ where: { email } });
         if (!user) {
           user = await db.user.create({
@@ -63,9 +62,7 @@ export const authOptions: NextAuthOptions = {
               name: credentials.name || "Demo User",
               age: parsedAge,
               address: credentials.address || "Localhost",
-              gender: credentials.gender || null,
-              occupation: credentials.occupation || null,
-              role: resolvedRole,
+              gender: credentials.gender || null, occupation: credentials.occupation || null, role: resolvedRole,
             },
           });
         } else {
@@ -74,18 +71,15 @@ export const authOptions: NextAuthOptions = {
             data: {
               ...(credentials.age && { age: parsedAge }),
               ...(credentials.address && { address: credentials.address }),
-              ...(credentials.name && { name: credentials.name }),
-              ...(credentials.gender && { gender: credentials.gender }),
+              ...(credentials.name && { name: credentials.name }), ...(credentials.gender && { gender: credentials.gender }),
               ...(credentials.occupation && { occupation: credentials.occupation }),
               ...((requestedRole || email === "admin@voti.com" || email === "system@voti.com") && { role: resolvedRole }),
             },
           });
         }
-        
         return {
-          id: user.id, name: user.name, email: user.email,
+          id: user.id, name: user.name, email: user.email, age: user.age, address: user.address, gender: user.gender, occupation: user.occupation, role: user.role,
           image: `https://api.dicebear.com/7.x/fun-emoji/svg?seed=${user.name || "user"}&backgroundColor=b6e3f4,c0aade,d1d4f9`,
-          age: user.age, address: user.address, gender: user.gender, occupation: user.occupation, role: user.role,
         };
       },
     }),

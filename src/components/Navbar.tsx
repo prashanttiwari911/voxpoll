@@ -45,7 +45,7 @@ export default function Navbar() {
           <div className="hidden md:flex items-center space-x-5">
             <ThemeToggle />
 
-            <Link href="/polls/new" className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 hover:from-indigo-500 hover:via-purple-500 hover:to-pink-400 text-white font-black px-5 py-2.5 rounded-2xl flex items-center space-x-2 text-sm transition-all shadow-md shadow-indigo-500/20 hover:shadow-indigo-500/40 hover:-translate-y-0.5 border border-indigo-400/20">
+            <Link href="/polls/new" className="bg-linear-to-r from-indigo-600 via-purple-600 to-pink-500 hover:from-indigo-500 hover:via-purple-500 hover:to-pink-400 text-white font-black px-5 py-2.5 rounded-2xl flex items-center space-x-2 text-sm transition-all shadow-md shadow-indigo-500/20 hover:shadow-indigo-500/40 hover:-translate-y-0.5 border border-indigo-400/20">
               <PlusCircle className="h-4 w-4" /><span>Create Poll</span>
             </Link>
 
@@ -63,7 +63,7 @@ export default function Navbar() {
                   />
                   <ChevronDown className={`h-4 w-4 text-zinc-400 transition-transform ${ui.dropdown ? 'rotate-180' : ''}`} />
                   {isProfileIncomplete && (
-                    <span className="absolute -top-0 -right-0 flex h-3 w-3">
+                    <span className="absolute top-0 right-0 flex h-3 w-3">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
                       <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500 border border-white"></span>
                     </span>
